@@ -1,34 +1,34 @@
-#include "Moveable.h"
+#include <SDL_rect.h>
+#include "HasPosition.h"
 
-SW::Moveable::Moveable()
-        : _position_x(0),
-          _position_y(0) {
+SW::HasPosition::HasPosition() : _position({0, 0}) {
     //
 }
 
-SW::Moveable::Moveable(int width, int height, int offset_x, int offset_y)
-        : _position_x(offset_x),
-          _position_y(offset_y) {
+SW::HasPosition::HasPosition(SDL_Point position) : _position(position) {
     //
 }
 
-void SW::Moveable::moveToWindowCenter(const SW::Window & window) {
-    this->_position_x = (window.getWidth() / 2) - (this->_width / 2);
-    this->_position_y = (window.getHeight() / 2) - (this->_height / 2);
+SDL_Point SW::HasPosition::getPosition() const {
+    return this->_position;
 }
 
-int SW::Moveable::getPositionX() const {
-    return _position_x;
+void SW::HasPosition::setPosition(SDL_Point position) {
+
 }
 
-void SW::Moveable::setPositionX(int position_x) {
-    _position_x = position_x;
+int SW::HasPosition::getPositionX() const {
+    return this->_position.x;
 }
 
-int SW::Moveable::getPositionY() const {
-    return _position_y;
+void SW::HasPosition::setPositionX(int position_x) {
+    this->_position.x = position_x;
 }
 
-void SW::Moveable::setPositionY(int position_y) {
-    _position_y = position_y;
+int SW::HasPosition::getPositionY() const {
+    return this->_position.y;
+}
+
+void SW::HasPosition::setPositionY(int position_y) {
+    this->_position.y = position_y;
 }

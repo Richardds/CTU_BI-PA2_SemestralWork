@@ -28,7 +28,7 @@ void SW::Window::destroy() {
 }
 
 const std::string & SW::Window::getTitle() const {
-    return _title;
+    return this->_title;
 }
 
 void SW::Window::setTitle(const std::string & title) {
@@ -36,7 +36,7 @@ void SW::Window::setTitle(const std::string & title) {
 }
 
 int SW::Window::getWidth() const {
-    return _width;
+    return this->_width;
 }
 
 void SW::Window::setWidth(int width) {
@@ -44,7 +44,7 @@ void SW::Window::setWidth(int width) {
 }
 
 int SW::Window::getHeight() const {
-    return _height;
+    return this->_height;
 }
 
 void SW::Window::setHeight(int height) {
@@ -52,5 +52,5 @@ void SW::Window::setHeight(int height) {
 }
 
 SDL_Window * SW::Window::getSDLWindow() const {
-    return _window;
+    return this->_window;
 }

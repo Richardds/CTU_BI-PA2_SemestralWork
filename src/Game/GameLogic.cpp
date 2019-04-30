@@ -1,20 +1,67 @@
 #include "GameLogic.h"
 
-SW::GameLogic::GameLogic() : _tick(TICK_DEFUALT), _tick_last(0) {
-    this->_tick_last = SDL_GetTicks();
+SW::GameLogic::GameLogic()
+    : _tick(TICK_DEFAULT),
+      _tick_last(0),
+      _cursor_position({0, 0}),
+      _stats() {
+    // Load building types
+    this->loadBuildingConfigs({
+        {SDLK_1, "city_hall"},
+        {SDLK_2, "farm"},
+        {SDLK_3, "house"},
+        {SDLK_4, "lumber_mill"},
+        {SDLK_5, "mine"}
+    });
+    if (!this->_building_configs.empty()) {
+        this->_selected_config = (*this->_building_configs.cbegin()).first;
+    }
 }
 
-void SW::GameLogic::process(const Renderer & renderer, const Window & window) {
-    if (this->tick()) {
-        _Info("WORLD TICK");
+SW::GameLogic::~GameLogic() {
+    for (auto const & building : this->_buildings) {
+        delete building;
     }
+    this->_buildings.clear();
+    for (auto const & config : this->_building_configs) {
+        delete config.second;
+    }
+    this->_building_configs.clear();
+}
 
-    // Rectangle test
-    Rectangle rect;
-    rect.moveToWindowCenter(window);
-    rect.setColor(Color(255, 0, 0));
-    rect.render(renderer);
+void SW::GameLogic::loadBuildingConfigs(std::initializer_list<BuildingConfigKeyboardBinding> bindings) {
+    for (auto const & binding : bindings) {
+        auto * config = new BuildingConfig(binding.config_name);
+        this->_building_configs.insert(std::pair<std::string, BuildingConfig *>(binding.config_name, config));
+        this->_building_configs_bindings.insert(std::pair<uint16_t , std::string>(binding.key_code, binding.config_name));
+    }
+}
 
+void SW::GameLogic::process(const Renderer & renderer) {
+    if (this->tick()) {
+        this->_stats.updateResourcesFromBuildings(this->_buildings);
+        this->_stats.tick();
+        _Info(this->_stats.toString());
+        if (!this->_stats.tick()) {
+            // You are dead man
+        }
+    }
+    // Render the world
+    for (const Building * building : this->_buildings) {
+        renderer.render(building);
+    }
+}
+
+bool SW::GameLogic::build(const std::string & config_name, SDL_Point position) {
+    BuildingConfig * config = this->_building_configs[config_name];
+    if (config == nullptr) {
+        _Error("Building type '" + config_name + "' does not exist.");
+        return false;
+    }
+    this->_buildings.push_back(new Building(config, position));
+
+    _Info("Building type '" + config_name + "' built.");
+    return true;
 }
 
 bool SW::GameLogic::tick() {
@@ -24,4 +71,35 @@ bool SW::GameLogic::tick() {
         return true;
     }
     return false;
+}
+
+void SW::GameLogic::handleEvent(const SDL_Event & event) {
+    switch (event.type) {
+        // Keyboard handler
+        case SDL_KEYDOWN:
+            this->handleKeyboard(event.key.keysym.sym);
+            break;
+        case SDL_MOUSEMOTION:
+            // Mouse motion handler
+            this->handleMouseMotion(event.motion);
+            break;
+        case SDL_MOUSEBUTTONUP:
+            // Mouse click handler
+            assert(this->build(this->_selected_config, this->_cursor_position));
+            break;
+        default:
+            break;
+    }
+}
+
+void SW::GameLogic::handleKeyboard(SDL_Keycode code) {
+    std::string config_name = this->_building_configs_bindings[code];
+    if (!config_name.empty()) {
+        this->_selected_config = config_name;
+    }
+}
+
+void SW::GameLogic::handleMouseMotion(const SDL_MouseMotionEvent & motion) {
+    this->_cursor_position.x = motion.x;
+    this->_cursor_position.y = motion.y;
 }

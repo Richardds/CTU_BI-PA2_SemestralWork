@@ -1,24 +1,48 @@
 #ifndef SEMESTRALWORK_GAMELOGIC_H
 #define SEMESTRALWORK_GAMELOGIC_H
 
-#include "../Core/Window.h"
+#include <cassert>
+#include <algorithm>
+#include <vector>
+#include <map>
 #include "../Core/Renderer.h"
-#include "../Graphics/Rectangle.h"
 #include "../Core/core.h"
-#include "../System/Logger.h"
+#include "WorldStats.h"
+#include "Objects/BuildingConfig.h"
+#include "Objects/Building.h"
 
 namespace SW {
     class GameLogic {
     public:
+        struct BuildingConfigKeyboardBinding {
+            int16_t key_code;
+            std::string config_name;
+        };
         GameLogic();
-        void process(const Renderer & renderer, const Window & window);
+        ~GameLogic();
+        void handleEvent(const SDL_Event & event);
+        void handleKeyboard(SDL_Keycode code);
+        void handleMouseMotion(const SDL_MouseMotionEvent & motion);
+        void process(const Renderer & renderer);
 
-        static const uint32_t TICK_DEFUALT = 1000;
+        // Game methods
+        bool build(const std::string & config_name, SDL_Point position);
+
+        static const uint32_t TICK_DEFAULT = 1000;
+        static const int TILE_SIZE = 40;
+        static const int TILE_SPACING = 5;
 
     private:
+        void loadBuildingConfigs(std::initializer_list<BuildingConfigKeyboardBinding> bindings);
         bool tick();
         uint32_t _tick;
         uint32_t _tick_last;
+        SDL_Point _cursor_position;
+        WorldStats _stats;
+        std::map<std::string, BuildingConfig *> _building_configs;
+        std::map<int16_t , std::string> _building_configs_bindings;
+        std::string _selected_config;
+        std::vector<Building *> _buildings;
     };
 }
 

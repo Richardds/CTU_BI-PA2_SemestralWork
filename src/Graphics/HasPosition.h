@@ -1,22 +1,24 @@
-#ifndef SEMESTRALWORK_MOVEABLE_H
-#define SEMESTRALWORK_MOVEABLE_H
+#ifndef SEMESTRALWORK_HASPOSITION_H
+#define SEMESTRALWORK_HASPOSITION_H
 
-#include "../Core/Window.h"
+#include "SDL.h"
 
 namespace SW {
-    class Moveable {
+    class Renderer;
+
+    class HasPosition {
     public:
-        Moveable();
-        Moveable(int width, int height, int offset_x = 0, int offset_y = 0);
-        void moveToWindowCenter(const Window & window);
+        HasPosition();
+        explicit HasPosition(SDL_Point position);
+        SDL_Point getPosition() const;
+        void setPosition(SDL_Point position);
         int getPositionX() const;
         void setPositionX(int position_x);
         int getPositionY() const;
         void setPositionY(int position_y);
 
     protected:
-        int _position_x;
-        int _position_y;
+        SDL_Point _position;
     };
 }
 

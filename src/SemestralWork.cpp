@@ -11,14 +11,17 @@ SW::SemestralWork::~SemestralWork() {
 bool SW::SemestralWork::initialize() {
     // Initialize SDL video subsystem
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        _Error("Failed to initialize SDL video subsystem!");
         return false;
     }
     // Initialize window
     if (!this->_window.initialize()) {
+        _Error("Failed to initialize window!");
         return false;
     }
     // Initialize renderer
     if (!this->_renderer.initialize(this->_window)) {
+        _Error("Failed to initialize renderer!");
         return false;
     }
     this->_close = false;
@@ -36,16 +39,13 @@ bool SW::SemestralWork::closeRequested() {
 }
 
 void SW::SemestralWork::loop() {
-    this->handleCoreEvents();
-    this->_game.process(this->_renderer, this->_window);
+    this->_renderer.prepare();
+    this->handleEvent();
+    this->_game.process(this->_renderer);
     this->_renderer.update();
 }
 
-void SW::SemestralWork::clearDisplay() {
-    this->_renderer.clearColor();
-}
-
-void SW::SemestralWork::handleCoreEvents() {
+void SW::SemestralWork::handleEvent() {
     SDL_Event event;
     if (SDL_PollEvent(&event)) {
         switch (event.type) {
@@ -54,6 +54,7 @@ void SW::SemestralWork::handleCoreEvents() {
                 this->_close = true;
                 break;
             default:
+                this->_game.handleEvent(event);
                 break;
         }
     }

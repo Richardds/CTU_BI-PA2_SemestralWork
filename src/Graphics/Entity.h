@@ -1,12 +1,15 @@
 #ifndef SEMESTRALWORK_RENDERABLE_H
 #define SEMESTRALWORK_RENDERABLE_H
 
+#include "HasPosition.h"
 #include "../Core/Renderer.h"
 
 namespace SW {
-    class Renderable {
+    class Entity : public HasPosition {
     public:
-        virtual void render(const Renderer & renderer) = 0;
+        Entity();
+        Entity(SDL_Point position);
+        virtual void draw(const Renderer & renderer) const = 0;
     };
 }
 
