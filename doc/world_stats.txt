@@ -1,0 +1,14 @@
+Resources:
+  gold
+  silver
+  copper
+  iron
+  wood
+  grain
+
+Buildings:
+  City Hall
+  House
+  Mine
+  Lumber mill
+  Field
