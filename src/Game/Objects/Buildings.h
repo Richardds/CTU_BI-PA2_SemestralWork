@@ -1,8 +1,0 @@
-//
-// Created by Richard on 4/6/2019.
-//
-
-#ifndef SEMESTRALWORK_BUILDINGS_H
-#define SEMESTRALWORK_BUILDINGS_H
-
-#endif //SEMESTRALWORK_BUILDINGS_H
