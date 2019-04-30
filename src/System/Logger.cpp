@@ -8,6 +8,10 @@ void SW::Logger::Debug(const std::string & message, const SW::Trace & trace) {
     std::cout << "[ DEBUG ]" << Logger::makeHeader(trace) << message << std::endl;
 }
 
+void SW::Logger::Internal(const std::string & message) {
+    std::cout << "[   DEV ]" << Logger::makeHeader() << message << std::endl;
+}
+
 void SW::Logger::Error(const std::string & message, const SW::Trace & trace) {
     std::cerr << "[ ERROR ]" << Logger::makeHeader(trace) << message << std::endl;
 }

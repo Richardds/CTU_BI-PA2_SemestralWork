@@ -13,6 +13,7 @@ namespace SW {
     public:
         static void Info(const std::string & message);
         static void Debug(const std::string & message, const Trace & trace);
+        static void Internal(const std::string & message);
         static void Error(const std::string & message, const Trace & trace);
 
     private:
