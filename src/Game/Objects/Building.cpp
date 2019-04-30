@@ -5,7 +5,7 @@ SW::Building::Building(const BuildingConfig * config, SDL_Point position)
     : Rectangle(config->getSizeX() * GameLogic::TILE_SIZE + 2 * (config->getSizeX() - 1) * GameLogic::TILE_SPACING,
                 config->getSizeY() * GameLogic::TILE_SIZE + 2 * (config->getSizeY() - 1) * GameLogic::TILE_SPACING,
                 position, config->getColor()), _config(config), _resources_limit(), _resources_gain(), _level(1) {
-    this->setLevel(1); // TODO
+    this->setLevel(1); // TODO: Load building level from save game
 }
 
 const SW::BuildingConfig * SW::Building::getConfig() const {
@@ -13,7 +13,16 @@ const SW::BuildingConfig * SW::Building::getConfig() const {
 }
 
 void SW::Building::updateResourcesLimit() {
-    // TODO
+    const WorldStats::Stats & resources_limit_increase_base = this->_config->getResourcesLimitIncreaseBase();
+    const WorldStats::StatsModifier & resources_limit_increase_modifier = this->_config->getResourcesLimitIncreaseModifier();
+    this->_resources_limit = {
+            .gold = (int16_t)((float)resources_limit_increase_base.gold * (float)this->_level * resources_limit_increase_modifier.gold),
+            .silver = (int16_t)((float)resources_limit_increase_base.silver * (float)this->_level * resources_limit_increase_modifier.silver),
+            .copper = (int16_t)((float)resources_limit_increase_base.copper * (float)this->_level * resources_limit_increase_modifier.copper),
+            .iron = (int16_t)((float)resources_limit_increase_base.iron * (float)this->_level * resources_limit_increase_modifier.iron),
+            .wood = (int16_t)((float)resources_limit_increase_base.wood * (float)this->_level * resources_limit_increase_modifier.wood),
+            .grain = (int16_t)((float)resources_limit_increase_base.grain * (float)this->_level * resources_limit_increase_modifier.grain)
+    };
 }
 
 void SW::Building::updateResourcesGain() {

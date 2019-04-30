@@ -26,8 +26,8 @@ bool SW::Tools::BuildingConfigGenerator::generate(const std::string & path,
     writer.write(color);
     writer.write(resources_gain_base);
     writer.write(resources_gain_modifier);
+    writer.write(resources_limit_increase_base);
     writer.write(resources_limit_increase_modifier);
-    writer.write(resources_gain_modifier);
     writer.close();
     _Internal("Building config '" + path + "' successfully generated.");
     return true;

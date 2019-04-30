@@ -6,7 +6,9 @@ SW::BuildingConfig::BuildingConfig(const std::string & config_name)
       _size_y(1),
       _color(),
       _resources_gain_base(),
-      _resources_gain_modifier() {
+      _resources_gain_modifier(),
+      _resources_limit_increase_base(),
+      _resources_limit_increase_modifier() {
     assert(this->load(config_name));
 }
 
@@ -36,6 +38,8 @@ bool SW::BuildingConfig::load(const std::string & config_name) {
     reader.read(this->_color);
     reader.read(this->_resources_gain_base);
     reader.read(this->_resources_gain_modifier);
+    reader.read(this->_resources_limit_increase_base);
+    reader.read(this->_resources_limit_increase_modifier);
     _Info("Building config file '" + config_name + "' loaded successfully.");
     return true;
 }
@@ -62,4 +66,12 @@ const SW::WorldStats::Stats & SW::BuildingConfig::getResourcesGainBase() const {
 
 const SW::WorldStats::StatsModifier & SW::BuildingConfig::getResourcesGainModifier() const {
     return this->_resources_gain_modifier;
+}
+
+const SW::WorldStats::Stats & SW::BuildingConfig::getResourcesLimitIncreaseBase() const {
+    return this->_resources_limit_increase_base;
+}
+
+const SW::WorldStats::StatsModifier & SW::BuildingConfig::getResourcesLimitIncreaseModifier() const {
+    return this->_resources_limit_increase_modifier;
 }
