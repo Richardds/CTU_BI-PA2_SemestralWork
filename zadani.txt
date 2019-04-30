@@ -1,0 +1,35 @@
+Vytvorte jednoduchú 2D hru podobnú budovatelskej strategii.
+Pred 2D vykreslovanie a získavanie vstupu z klávesnice použite
+knižnicu SDL (Simple DirectMedia Layer). Na volnú plochu, predstavujúcu
+dedinu, alebo oblasť bude môcť hráč staviať budovy. Dedina je
+charakterizovaná počtom osôb a surovinami (zlato, striebro, meď,
+železo, drevo, obilniny). Každý typ budovy prispieva do systému dediny
+rôzne.
+
+V hre sa vyskytujú nasledovné budovy:
+- City Hall:   Predstavuje hlavnú budovu celej oblasti. Každá oblasť má
+               práve jednu takúto budovu. Ukladá prvé suroviny, avšak
+               skoro žiade neprodukuje.
+- House:       Každá dedina má samozrejme domy, kde bývajú občania dediny.
+               Viac domov predstavuje väčšiu populáciu, avšak aj väčšie
+               nároky na sklady potravín dediny.
+- Mine:        Dedina musí od niekaľ získavať suroviny na stavbu nových
+               budov. Tieto suroviny tvoria prevažne meď, železo a drevo.
+- Lumber mill: Pre stavbu niektorých typov budov je potrebná produkcia
+               dreva. Táto budova tento problém rieši.
+- Farm:        Aby systém dediny fungoval, obyvatelia dediny potrebujú potravu.
+               V hre je potrava obyvateľov charakterizovaná ako obilie.
+
+Hra bude bude načítavať konfiguráciu rôznych budov z binárneho súboru.
+V tomto súbore sa nachádzajú surovinové podiely na jeden konkrétny typ
+bodovy. Keďže je budovy možné vylepšovať, súbor obsahuje aj relatívny rást
+surovín na základe jej stupňa. Každá budova ma iný počet "tick"-ov pre
+dokončenie stavby. Pokiaľ je budova v stave stavania, jej produkcia
+surovin je pozastavená.
+
+Hru je možné počas behu uložiť. Takzvaný "savegame" je binárny súbor, ktorý
+obsahuje rozostavenie budov po dedine, ich stupne a ďalej samozrejme
+počet všetkých surovín, ktoré boli vyprodukované. Po načítaní uloženej
+hry sa aktuálny stav dediny prepíše.
+
+Cieľom hry je nedostiahnuť stavu hladomoru.
