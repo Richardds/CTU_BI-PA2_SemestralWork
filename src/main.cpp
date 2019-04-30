@@ -1,17 +1,21 @@
-#include <iostream>
+#define SDL_MAIN_HANDLED
+
 #include "SemestralWork.h"
+#include "Tools/BuildingConfigGenerator.h"
+
+#include "generate.cpp"
 
 using namespace SW;
 
 int main() {
+    SW::generate();
+
     SemestralWork application;
 
     if (!application.initialize()) {
-        std::cerr << "Failed to initialize application!" << std::endl;
+        _Error("Failed to initialize application!");
         return 1;
     }
-
-    application.clearDisplay();
 
     while (!application.closeRequested()) {
         application.loop();
