@@ -40,7 +40,6 @@ void SW::GameLogic::loadBuildingConfigs(std::initializer_list<BuildingConfigKeyb
 void SW::GameLogic::process(const Renderer & renderer) {
     if (this->tick()) {
         this->_stats.updateResourcesFromBuildings(this->_buildings);
-        this->_stats.tick();
         _Info(this->_stats.toString());
         if (!this->_stats.tick()) {
             // You are dead man
@@ -52,12 +51,30 @@ void SW::GameLogic::process(const Renderer & renderer) {
     }
 }
 
+SDL_Point SW::GameLogic::convertToGameCoords(SDL_Point point) {
+    int spacing = GameLogic::TILE_SIZE + GameLogic::TILE_SPACING;
+    return {point.x / spacing, point.y / spacing};
+}
+
+SDL_Point SW::GameLogic::convertFromGameCoords(SDL_Point point) {
+    int spacing = GameLogic::TILE_SIZE + GameLogic::TILE_SPACING;
+    return {point.x * spacing, point.y * spacing};
+}
+
 bool SW::GameLogic::build(const std::string & config_name, SDL_Point position) {
     BuildingConfig * config = this->_building_configs[config_name];
     if (config == nullptr) {
         _Error("Building type '" + config_name + "' does not exist.");
         return false;
     }
+    // Normalize building coordinates
+    position = this->convertToGameCoords(position);
+    position = this->convertFromGameCoords(position);
+
+    // Check other building collisions
+    // TODO: Do it!
+
+    // Add building to render queue
     this->_buildings.push_back(new Building(config, position));
 
     _Info("Building type '" + config_name + "' built.");
