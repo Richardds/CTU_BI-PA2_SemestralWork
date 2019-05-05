@@ -12,7 +12,7 @@ V hre sa vyskytujú nasledovné budovy:
                skoro žiade neprodukuje.
 - House:       Každá dedina má samozrejme domy, kde bývajú občania dediny.
                Viac domov predstavuje väčšiu populáciu, avšak aj väčšie
-               nároky na sklady potravín dediny.
+               nároky na produkciu a sklady zásob dediny.
 - Mine:        Dedina musí od niekaľ získavať suroviny na stavbu nových
                budov. Tieto suroviny tvoria prevažne meď, železo a drevo.
 - Lumber mill: Pre stavbu niektorých typov budov je potrebná produkcia
@@ -20,11 +20,12 @@ V hre sa vyskytujú nasledovné budovy:
 - Farm:        Aby systém dediny fungoval, obyvatelia dediny potrebujú potravu.
                V hre je potrava obyvateľov charakterizovaná ako obilie.
 
-Hra bude bude načítavať konfiguráciu rôznych budov z binárneho súboru.
+Hra bude načítavať konfiguráciu rôznych budov z binárneho súboru.
 V tomto súbore sa nachádzajú surovinové podiely na jeden konkrétny typ
-bodovy. Keďže je budovy možné vylepšovať, súbor obsahuje aj relatívny rást
-surovín na základe jej stupňa. Každá budova ma iný počet "tick"-ov pre
-dokončenie stavby. Pokiaľ je budova v stave stavania, jej produkcia
+bodovy. Keďže je budovy možné vylepšovať, súbor obsahuje aj relatívny rast
+surovín na základe stupňa boduvy. Stavba každej budovy sa može časovo líšiť.
+Čas potrebný na postavenie budovy sa náhodne vygeneruje z vopred daného rozmedzia
+podľa typu budovy. Pokiaľ je budova v stave výstavby, jej produkcia
 surovin je pozastavená.
 
 Hru je možné počas behu uložiť. Takzvaný "savegame" je binárny súbor, ktorý
@@ -33,3 +34,5 @@ počet všetkých surovín, ktoré boli vyprodukované. Po načítaní uloženej
 hry sa aktuálny stav dediny prepíše.
 
 Cieľom hry je nedostiahnuť stavu hladomoru.
+
+Semstrálnu prácu priebežne náhrávajte do versioning systému GIT.
