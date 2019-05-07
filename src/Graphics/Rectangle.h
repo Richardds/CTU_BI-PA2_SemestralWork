@@ -13,6 +13,12 @@ namespace SW {
         Rectangle(int width, int height, SDL_Point position = {0, 0}, SDL_Color _color = {0, 0, 0, 0});
         const SDL_Color & getColor() const;
         void setColor(const SDL_Color & color);
+        int getWidth() const;
+        void setWidth(int width);
+        int getHeight() const;
+        void setHeight(int height);
+        bool overlapsPoint(SDL_Point point);
+        bool overlapsOtherRectangle(const Rectangle & rectangle);
         void draw(const Renderer & renderer) const override;
 
     protected:

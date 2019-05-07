@@ -51,33 +51,39 @@ void SW::GameLogic::process(const Renderer & renderer) {
 bool SW::GameLogic::build(const std::string & config_name, SDL_Point position) {
     BuildingConfig * config = this->_building_configs[config_name];
     if (config == nullptr) {
-        _Error("Building type '" + config_name + "' does not exist.");
+        _Error("Building config '" + config_name + "' does not exist.");
         return false;
     }
+
     // Normalize building coordinates
     SDL_Point game_coordinates = GameLogic::convertToGameCoordinates(position);
 
-    // Check other building collisions
-    // TODO: Do it!
+    Building to_build(config, game_coordinates);
+
+    // Check if new building collides with others
+    for (const auto & building : this->_buildings) {
+        if (building.second->overlapsOtherRectangle(to_build)) {
+            _Info("Building '" + to_build.getConfig()->getTitle() + "' is colliding with building '"
+            + building.second->getConfig()->getTitle() + "' ID(" + std::to_string(building.first) + ").");
+            return false;
+        }
+    }
 
     // Add building to render queue
-    this->_buildings.add(std::make_shared<Building>(Building(config, game_coordinates)));
+    this->_buildings.add(std::make_shared<Building>(to_build));
 
-    _Info("Building type '" + config_name + "' built on coordinates " + std::to_string(game_coordinates.x) + "x" + std::to_string(game_coordinates.y) + ".");
+    _Info("Building '" + to_build.getConfig()->getTitle() + "' built on coordinates "
+    + std::to_string(game_coordinates.x) + "x" + std::to_string(game_coordinates.y) + ".");
     return true;
 }
 
 bool SW::GameLogic::destroy(SDL_Point position) {
-    position = GameLogic::convertFromGameCoordinates(position);
-
     for (const auto & building : this->_buildings) {
-        // TODO: Do detection stuff and destroy colliding building
-        if (false) {
+        if (building.second->overlapsPoint(position)) {
             this->_buildings.remove(building.first);
             return true;
         }
     }
-
     return false;
 }
 
@@ -132,7 +138,7 @@ void SW::GameLogic::handleMouseClick(const SDL_MouseButtonEvent & click) {
     switch (click.button) {
         case SDL_BUTTON_LEFT:
             // Build new building
-            assert(this->build(this->_selected_config, {click.x, click.y}));
+            this->build(this->_selected_config, {click.x, click.y});
             break;
         case SDL_BUTTON_RIGHT:
             // Destroy existing building
