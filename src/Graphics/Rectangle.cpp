@@ -61,6 +61,18 @@ bool SW::Rectangle::overlapsOtherRectangle(const SW::Rectangle & rectangle) {
     return fuck;
 }
 
+bool SW::Rectangle::overlapsHorizontalLine(int offset) {
+    int top = this->getPositionY();
+    int bottom = top + this->getHeight();
+    return top <= offset && offset <= bottom;
+}
+
+bool SW::Rectangle::overlapsVerticalLine(int offset) {
+    int left = this->getPositionX();
+    int right = left + this->getWidth();
+    return left <= offset && offset <= right;
+}
+
 void SW::Rectangle::draw(const SW::Renderer & renderer) const {
     SDL_Rect rect;
     rect.w = this->_width;

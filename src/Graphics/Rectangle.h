@@ -19,6 +19,8 @@ namespace SW {
         void setHeight(int height);
         bool overlapsPoint(SDL_Point point);
         bool overlapsOtherRectangle(const Rectangle & rectangle);
+        bool overlapsHorizontalLine(int offset);
+        bool overlapsVerticalLine(int offset);
         void draw(const Renderer & renderer) const override;
 
     protected:

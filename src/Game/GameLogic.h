@@ -18,7 +18,7 @@ namespace SW {
             int16_t key_code;
             std::string config_name;
         };
-        GameLogic();
+        GameLogic(const Window & window);
         ~GameLogic();
         void process(const Renderer & renderer);
         void handleEvent(const SDL_Event & event);
@@ -33,6 +33,7 @@ namespace SW {
         static const int TILE_SPACING = 5;
 
     private:
+        const Window & _window;
         uint32_t _tick;
         uint32_t _tick_last;
         SDL_Point _cursor_position;

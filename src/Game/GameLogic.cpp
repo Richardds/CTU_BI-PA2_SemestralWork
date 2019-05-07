@@ -1,7 +1,8 @@
 #include "GameLogic.h"
 
-SW::GameLogic::GameLogic()
-    : _tick(TICK_DEFAULT),
+SW::GameLogic::GameLogic(const Window & window)
+    : _window(window),
+      _tick(TICK_DEFAULT),
       _tick_last(0),
       _cursor_position({0, 0}),
       _stats() {
@@ -51,7 +52,7 @@ void SW::GameLogic::process(const Renderer & renderer) {
 bool SW::GameLogic::build(const std::string & config_name, SDL_Point position) {
     BuildingConfig * config = this->_building_configs[config_name];
     if (config == nullptr) {
-        _Error("Building config '" + config_name + "' does not exist.");
+        _Error("Cannot build building with nonexistent config '" + config_name + "'.");
         return false;
     }
 
@@ -63,10 +64,16 @@ bool SW::GameLogic::build(const std::string & config_name, SDL_Point position) {
     // Check if new building collides with others
     for (const auto & building : this->_buildings) {
         if (building.second->overlapsOtherRectangle(to_build)) {
-            _Info("Building '" + to_build.getConfig()->getTitle() + "' is colliding with building '"
+            _Info("Cannot build building '" + to_build.getConfig()->getTitle() + "' colliding with building '"
             + building.second->getConfig()->getTitle() + "' ID(" + std::to_string(building.first) + ").");
             return false;
         }
+    }
+
+    // Check if building collides with windows borders
+    if (to_build.overlapsHorizontalLine(this->_window.getHeight()) || to_build.overlapsVerticalLine(this->_window.getWidth())) {
+        _Info("Cannot build building '" + to_build.getConfig()->getTitle() + "' colliding window borders.");
+        return false;
     }
 
     // Add building to render queue
