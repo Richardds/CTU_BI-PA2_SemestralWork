@@ -2,9 +2,15 @@
 #include "../GameLogic.h"
 
 SW::Building::Building(const BuildingConfig * config, SDL_Point position)
-    : Rectangle(config->getSizeX() * GameLogic::TILE_SIZE + 2 * (config->getSizeX() - 1) * GameLogic::TILE_SPACING,
-                config->getSizeY() * GameLogic::TILE_SIZE + 2 * (config->getSizeY() - 1) * GameLogic::TILE_SPACING,
-                position, config->getColor()), _config(config), _resources_limit(), _resources_gain(), _level(1) {
+    : Rectangle(
+            config->getSizeX() * GameLogic::TILE_SIZE,
+            config->getSizeY() * GameLogic::TILE_SIZE,
+            position,
+            config->getColor()),
+      _config(config),
+      _resources_limit(),
+      _resources_gain(),
+      _level(1) {
     this->setLevel(1); // TODO: Load building level from save game
 }
 

@@ -51,16 +51,6 @@ void SW::GameLogic::process(const Renderer & renderer) {
     }
 }
 
-SDL_Point SW::GameLogic::convertToGameCoords(SDL_Point point) {
-    int spacing = GameLogic::TILE_SIZE + GameLogic::TILE_SPACING;
-    return {point.x / spacing, point.y / spacing};
-}
-
-SDL_Point SW::GameLogic::convertFromGameCoords(SDL_Point point) {
-    int spacing = GameLogic::TILE_SIZE + GameLogic::TILE_SPACING;
-    return {point.x * spacing, point.y * spacing};
-}
-
 bool SW::GameLogic::build(const std::string & config_name, SDL_Point position) {
     BuildingConfig * config = this->_building_configs[config_name];
     if (config == nullptr) {
@@ -68,8 +58,7 @@ bool SW::GameLogic::build(const std::string & config_name, SDL_Point position) {
         return false;
     }
     // Normalize building coordinates
-    position = this->convertToGameCoords(position);
-    position = this->convertFromGameCoords(position);
+    position = GameLogic::normalizeCoordinates(position);
 
     // Check other building collisions
     // TODO: Do it!
@@ -79,6 +68,26 @@ bool SW::GameLogic::build(const std::string & config_name, SDL_Point position) {
 
     _Info("Building type '" + config_name + "' built.");
     return true;
+}
+
+SDL_Point SW::GameLogic::convertToGameCoordinates(SDL_Point point) {
+    double spacing = GameLogic::TILE_SIZE + GameLogic::TILE_SPACING;
+    return {
+            (int)floor(point.x / spacing),
+            (int)floor(point.y / spacing)
+    };
+}
+
+SDL_Point SW::GameLogic::convertFromGameCoordinates(SDL_Point point) {
+    return {
+            GameLogic::TILE_SPACING + (GameLogic::TILE_SIZE + GameLogic::TILE_SPACING) * point.x,
+            GameLogic::TILE_SPACING + (GameLogic::TILE_SIZE + GameLogic::TILE_SPACING) * point.y
+    };
+}
+
+SDL_Point SW::GameLogic::normalizeCoordinates(SDL_Point point) {
+    point = GameLogic::convertToGameCoordinates(point);
+    return GameLogic::convertFromGameCoordinates(point);
 }
 
 bool SW::GameLogic::tick() {

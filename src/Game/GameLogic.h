@@ -26,9 +26,11 @@ namespace SW {
         void process(const Renderer & renderer);
 
         // Game methods
-        SDL_Point convertToGameCoords(SDL_Point point);
-        SDL_Point convertFromGameCoords(SDL_Point point);
         bool build(const std::string & config_name, SDL_Point position);
+
+        static SDL_Point convertToGameCoordinates(SDL_Point point);
+        static SDL_Point convertFromGameCoordinates(SDL_Point point);
+        static SDL_Point normalizeCoordinates(SDL_Point point);
 
         static const uint32_t TICK_DEFAULT = 5000;
         static const int TILE_SIZE = 40;
