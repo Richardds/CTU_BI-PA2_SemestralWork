@@ -19,9 +19,6 @@ SW::GameLogic::GameLogic()
 }
 
 SW::GameLogic::~GameLogic() {
-    for (auto const & building : this->_buildings) {
-        delete building;
-    }
     this->_buildings.clear();
     for (auto const & config : this->_building_configs) {
         delete config.second;
@@ -46,8 +43,8 @@ void SW::GameLogic::process(const Renderer & renderer) {
         }
     }
     // Render the world
-    for (const Building * building : this->_buildings) {
-        renderer.render(building);
+    for (const auto & building : this->_buildings) {
+        renderer.render(building.second.get());
     }
 }
 
@@ -58,16 +55,30 @@ bool SW::GameLogic::build(const std::string & config_name, SDL_Point position) {
         return false;
     }
     // Normalize building coordinates
-    position = GameLogic::normalizeCoordinates(position);
+    SDL_Point game_coordinates = GameLogic::convertToGameCoordinates(position);
 
     // Check other building collisions
     // TODO: Do it!
 
     // Add building to render queue
-    this->_buildings.push_back(new Building(config, position));
+    this->_buildings.add(std::make_shared<Building>(Building(config, game_coordinates)));
 
-    _Info("Building type '" + config_name + "' built.");
+    _Info("Building type '" + config_name + "' built on coordinates " + std::to_string(game_coordinates.x) + "x" + std::to_string(game_coordinates.y) + ".");
     return true;
+}
+
+bool SW::GameLogic::destroy(SDL_Point position) {
+    position = GameLogic::convertFromGameCoordinates(position);
+
+    for (const auto & building : this->_buildings) {
+        // TODO: Do detection stuff and destroy colliding building
+        if (false) {
+            this->_buildings.remove(building.first);
+            return true;
+        }
+    }
+
+    return false;
 }
 
 SDL_Point SW::GameLogic::convertToGameCoordinates(SDL_Point point) {
@@ -85,11 +96,6 @@ SDL_Point SW::GameLogic::convertFromGameCoordinates(SDL_Point point) {
     };
 }
 
-SDL_Point SW::GameLogic::normalizeCoordinates(SDL_Point point) {
-    point = GameLogic::convertToGameCoordinates(point);
-    return GameLogic::convertFromGameCoordinates(point);
-}
-
 bool SW::GameLogic::tick() {
     uint32_t tick_current = SDL_GetTicks();
     if (tick_current - this->_tick_last >= this->_tick) {
@@ -101,17 +107,13 @@ bool SW::GameLogic::tick() {
 
 void SW::GameLogic::handleEvent(const SDL_Event & event) {
     switch (event.type) {
-        // Keyboard handler
+            // Keyboard handler
         case SDL_KEYDOWN:
             this->handleKeyboard(event.key.keysym.sym);
             break;
-        case SDL_MOUSEMOTION:
-            // Mouse motion handler
-            this->handleMouseMotion(event.motion);
-            break;
         case SDL_MOUSEBUTTONUP:
             // Mouse click handler
-            assert(this->build(this->_selected_config, this->_cursor_position));
+            this->handleMouseClick(event.button);
             break;
         default:
             break;
@@ -119,13 +121,24 @@ void SW::GameLogic::handleEvent(const SDL_Event & event) {
 }
 
 void SW::GameLogic::handleKeyboard(SDL_Keycode code) {
-    std::string config_name = this->_building_configs_bindings[code];
-    if (!config_name.empty()) {
-        this->_selected_config = config_name;
+    auto iterator = this->_building_configs_bindings.find(code);
+    if (iterator != end(this->_building_configs_bindings)) {
+        this->_selected_config = iterator->second;
+        _Info("Selected building '" + iterator->second + "'.");
     }
 }
 
-void SW::GameLogic::handleMouseMotion(const SDL_MouseMotionEvent & motion) {
-    this->_cursor_position.x = motion.x;
-    this->_cursor_position.y = motion.y;
+void SW::GameLogic::handleMouseClick(const SDL_MouseButtonEvent & click) {
+    switch (click.button) {
+        case SDL_BUTTON_LEFT:
+            // Build new building
+            assert(this->build(this->_selected_config, {click.x, click.y}));
+            break;
+        case SDL_BUTTON_RIGHT:
+            // Destroy existing building
+            this->destroy({click.x, click.y});
+            break;
+        default:
+            break;
+    }
 }

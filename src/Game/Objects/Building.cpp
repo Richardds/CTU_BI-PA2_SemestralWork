@@ -5,7 +5,7 @@ SW::Building::Building(const BuildingConfig * config, SDL_Point position)
     : Rectangle(
             config->getSizeX() * GameLogic::TILE_SIZE,
             config->getSizeY() * GameLogic::TILE_SIZE,
-            position,
+            GameLogic::convertFromGameCoordinates(position),
             config->getColor()),
       _config(config),
       _resources_limit(),

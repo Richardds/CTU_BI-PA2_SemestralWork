@@ -2,8 +2,8 @@
 #define SEMESTRALWORK_WORLDSTATS_H
 
 #include <cmath>
-#include <vector>
 #include "../Core/core.h"
+#include "../System/Containers/IdentifyingCollection.h"
 
 namespace SW {
     class Building;
@@ -35,7 +35,7 @@ namespace SW {
         bool increaseIron(int16_t amount);
         bool increaseWood(int16_t amount);
         bool increaseGrain(int16_t amount);
-        void updateResourcesFromBuildings(const std::vector<Building *> & buildings);
+        void updateResourcesFromBuildings(const IdentifyingCollection<std::shared_ptr<Building>> & buildings);
         bool tick();
         std::string toString();
 

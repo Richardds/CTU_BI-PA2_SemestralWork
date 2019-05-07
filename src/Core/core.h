@@ -2,6 +2,7 @@
 #define SEMESTRALWORK_CORE_H
 
 #include <cstdint>
+#include <memory>
 #include "SDL.h"
 #include "../System/Trace.h"
 #include "../System/Logger.h"

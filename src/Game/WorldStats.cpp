@@ -34,12 +34,12 @@ bool SW::WorldStats::increaseGrain(int16_t amount) {
     return WorldStats::increaseFunction(this->_resources.grain, amount, this->_resources_limit.grain);
 }
 
-void SW::WorldStats::updateResourcesFromBuildings(const std::vector<Building *> & buildings) {
+void SW::WorldStats::updateResourcesFromBuildings(const IdentifyingCollection<std::shared_ptr<Building>> & buildings) {
     this->_resources_limit = {};
     this->_resources_gain = {};
     for (auto const & building : buildings) {
-        building->applyBuildingResourcesLimit(this->_resources_limit);
-        building->applyBuildingResourcesGain(this->_resources_gain);
+        building.second->applyBuildingResourcesLimit(this->_resources_limit);
+        building.second->applyBuildingResourcesGain(this->_resources_gain);
     }
 }
 
