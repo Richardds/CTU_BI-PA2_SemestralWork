@@ -105,14 +105,33 @@ bool SW::GameLogic::build(const std::string & config_name, SW::Position position
     return true;
 }
 
-bool SW::GameLogic::destroy(SW::Position position) {
-    for (const auto & building : this->_buildings) {
-        if (building.second->overlapsPoint(position)) {
-            this->_buildings.remove(building.first);
-            return true;
-        }
+bool SW::GameLogic::upgrade(SW::Position position) {
+    uint32_t building_id = this->buildingClicked(position);
+    if (building_id < 0) {
+        return false;
     }
-    return false;
+    std::shared_ptr<Building> building = this->_buildings.get(building_id);
+    // TODO: Check required resources for building upgrade
+    if (!building->isBuilt()) {
+        _Info("Cannot upgrade building '" + building->getConfig()->getTitle() + "'. Building is under construction.");
+        return false;
+    }
+    if (!building->levelUp()) {
+        _Info("Cannot upgrade building '" + building->getConfig()->getTitle() + "'. Building is upgraded to maximum level.");
+        return false;
+    }
+    _Info("Building '" + building->getConfig()->getTitle() + "' upgraded to level "
+    + std::to_string(building->getLevel()) + ".");
+    return true;
+}
+
+bool SW::GameLogic::destroy(SW::Position position) {
+    uint32_t building_id = this->buildingClicked(position);
+    if (building_id < 0) {
+        return false;
+    }
+    this->_buildings.remove(building_id);
+    return true;
 }
 
 bool SW::GameLogic::save(const std::string & path) {
@@ -231,6 +250,15 @@ bool SW::GameLogic::tick() {
     return false;
 }
 
+uint32_t SW::GameLogic::buildingClicked(SW::Position position) {
+    for (const auto & building : this->_buildings) {
+        if (building.second->overlapsPoint(position)) {
+            return building.first;
+        }
+    }
+    return -1;
+}
+
 void SW::GameLogic::handleEvent(const SDL_Event & event) {
     switch (event.type) {
             // Keyboard handler
@@ -280,6 +308,10 @@ void SW::GameLogic::handleMouseClick(const SDL_MouseButtonEvent & click) {
             this->build(this->_selected_config, GameLogic::convertToGameCoordinates({
                 (uint16_t)click.x, (uint16_t)click.y
             }));
+            break;
+        case SDL_BUTTON_MIDDLE:
+            // Upgrade existing building
+            this->upgrade({(uint16_t)click.x, (uint16_t)click.y});
             break;
         case SDL_BUTTON_RIGHT:
             // Destroy existing building

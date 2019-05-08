@@ -93,6 +93,15 @@ void SW::Building::setLevel(uint8_t level) {
     this->updateResourcesGain();
 }
 
+bool SW::Building::levelUp() {
+    if (this->_level != Building::MAX_LEVEL) {
+        // Use setter to trigger resources update
+        this->setLevel(this->_level + 1);
+        return true;
+    }
+    return false;
+}
+
 void SW::Building::writeToBinaryWriter(SW::BinaryWriter & writer) const {
     writer.writeString(this->getConfig()->getName());
     writer.write(this->_game_position);

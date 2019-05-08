@@ -20,11 +20,14 @@ namespace SW {
         void setGamePositionY(int game_position_y);
         uint8_t getLevel() const;
         void setLevel(uint8_t level);
+        bool levelUp();
         bool isBuilt() const;
         void setBuiltInTicks(uint16_t ticks);
         void tick();
 
         void writeToBinaryWriter(BinaryWriter & reader) const override;
+
+        static const uint8_t MAX_LEVEL = 4;
 
     private:
         const BuildingConfig * _config;

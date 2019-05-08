@@ -24,6 +24,7 @@ namespace SW {
         void process(const Renderer & renderer);
         void handleEvent(const SDL_Event & event);
         bool build(const std::string & config_name, Position position, uint32_t * building_id = nullptr);
+        bool upgrade(Position position);
         bool destroy(Position position);
         bool save(const std::string & path);
         bool load(const std::string & path);
@@ -51,6 +52,7 @@ namespace SW {
         std::string _selected_config;
 
         bool tick();
+        uint32_t buildingClicked(Position position);
         void handleKeyboard(SDL_Keycode code);
         void handleMouseClick(const SDL_MouseButtonEvent & click);
         void loadBuildingConfigs(std::initializer_list<BuildingConfigKeyboardBinding> bindings);
