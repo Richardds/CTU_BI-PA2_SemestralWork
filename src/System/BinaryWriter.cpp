@@ -9,6 +9,14 @@ bool SW::BinaryWriter::open(const std::string & path) {
     return !this->stream.fail();
 }
 
+void SW::BinaryWriter::writeObject(const SW::Exportable * object) {
+    object->writeToBinaryWriter(*this);
+}
+
+void SW::BinaryWriter::writeObject(const Exportable & object) {
+    object.writeToBinaryWriter(*this);
+}
+
 void SW::BinaryWriter::writeString(const std::string & value) {
     this->stream.write(value.c_str(), value.length());
     this->stream << (unsigned char)'\0';

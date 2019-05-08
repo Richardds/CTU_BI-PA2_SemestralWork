@@ -3,6 +3,7 @@
 
 #include <string>
 #include <fstream>
+#include "../Game/Exportable.h"
 
 namespace SW {
     class BinaryReader {

@@ -18,35 +18,43 @@ namespace SW {
             int16_t key_code;
             std::string config_name;
         };
-        GameLogic(const Window & window);
+        explicit GameLogic(const Window & window);
         ~GameLogic();
+        void clearGameState();
         void process(const Renderer & renderer);
         void handleEvent(const SDL_Event & event);
-        bool build(const std::string & config_name, SDL_Point position);
-        bool destroy(SDL_Point position);
+        bool build(const std::string & config_name, Position position, uint32_t * building_id = nullptr);
+        bool destroy(Position position);
+        bool save(const std::string & path);
+        bool load(const std::string & path);
 
-        static SDL_Point convertToGameCoordinates(SDL_Point point);
-        static SDL_Point convertFromGameCoordinates(SDL_Point point);
+        static uint16_t convertToGameCoordinate(uint16_t coordinate);
+        static uint16_t convertFromGameCoordinate(uint16_t coordinate);
+        static Position convertToGameCoordinates(Position position);
+        static Position convertFromGameCoordinates(Position position);
 
         static const uint32_t TICK_DEFAULT = 5000;
-        static const int TILE_SIZE = 40;
-        static const int TILE_SPACING = 5;
+        static const uint16_t TILE_SIZE = 40;
+        static const uint16_t TILE_SPACING = 5;
+        static const uint8_t SUPPORTED_GAME_STATE_VERSION = 1;
 
     private:
         const Window & _window;
+        std::string _world_name;
         uint32_t _tick;
         uint32_t _tick_last;
+        uint32_t _game_time;
         SDL_Point _cursor_position;
         WorldStats _stats;
+        IdentifyingCollection<std::shared_ptr<Building>> _buildings;
         std::map<std::string, BuildingConfig *> _building_configs;
         std::map<int16_t , std::string> _building_configs_bindings;
         std::string _selected_config;
-        IdentifyingCollection<std::shared_ptr<Building>> _buildings;
 
+        bool tick();
         void handleKeyboard(SDL_Keycode code);
         void handleMouseClick(const SDL_MouseButtonEvent & click);
         void loadBuildingConfigs(std::initializer_list<BuildingConfigKeyboardBinding> bindings);
-        bool tick();
     };
 }
 

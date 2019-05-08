@@ -10,14 +10,14 @@ namespace SW {
     class Rectangle : public Entity {
     public:
         Rectangle();
-        Rectangle(int width, int height, SDL_Point position = {0, 0}, SDL_Color _color = {0, 0, 0, 0});
+        Rectangle(int width, int height, Position position = {0, 0}, SDL_Color _color = {0, 0, 0, 0});
         const SDL_Color & getColor() const;
         void setColor(const SDL_Color & color);
         int getWidth() const;
         void setWidth(int width);
         int getHeight() const;
         void setHeight(int height);
-        bool overlapsPoint(SDL_Point point);
+        bool overlapsPoint(Position point);
         bool overlapsOtherRectangle(const Rectangle & rectangle);
         bool overlapsHorizontalLine(int offset);
         bool overlapsVerticalLine(int offset);

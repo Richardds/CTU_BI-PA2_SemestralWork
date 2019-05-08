@@ -8,7 +8,7 @@ namespace SW {
     class Entity : public HasPosition {
     public:
         Entity();
-        Entity(SDL_Point position);
+        Entity(Position position);
         virtual void draw(const Renderer & renderer) const = 0;
     };
 }

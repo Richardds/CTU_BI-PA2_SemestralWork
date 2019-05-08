@@ -17,7 +17,7 @@ namespace SW {
 
         T get(uint32_t id) {
             auto iterator = this->find(id);
-            return iterator != end(this) ? iterator.second : nullptr;
+            return iterator != end(*this) ? iterator->second : nullptr;
         }
 
         void remove(uint32_t id) {

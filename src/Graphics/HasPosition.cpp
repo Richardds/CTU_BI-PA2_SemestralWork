@@ -5,15 +5,15 @@ SW::HasPosition::HasPosition() : _position({0, 0}) {
     //
 }
 
-SW::HasPosition::HasPosition(SDL_Point position) : _position(position) {
+SW::HasPosition::HasPosition(SW::Position position) : _position(position) {
     //
 }
 
-SDL_Point SW::HasPosition::getPosition() const {
+SW::Position SW::HasPosition::getPosition() const {
     return this->_position;
 }
 
-void SW::HasPosition::setPosition(SDL_Point position) {
+void SW::HasPosition::setPosition(SW::Position position) {
 
 }
 

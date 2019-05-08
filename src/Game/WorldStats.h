@@ -4,11 +4,12 @@
 #include <cmath>
 #include "../Core/core.h"
 #include "../System/Containers/IdentifyingCollection.h"
+#include "Exportable.h"
 
 namespace SW {
     class Building;
 
-    class WorldStats {
+    class WorldStats : public Exportable {
     public:
         struct Stats {
             int16_t gold;
@@ -37,13 +38,17 @@ namespace SW {
         bool increaseGrain(int16_t amount);
         void updateResourcesFromBuildings(const IdentifyingCollection<std::shared_ptr<Building>> & buildings);
         bool tick();
+        void clear();
+        void loadResources(const Stats & resources);
         std::string toString();
+
+        void writeToBinaryWriter(BinaryWriter & writer) const override;
 
     private:
         template<typename T> bool increaseFunction(T & var, T amount, T limit);
         Stats _resources;
-        Stats _resources_limit;
         Stats _resources_gain;
+        Stats _resources_limit;
     };
 }
 

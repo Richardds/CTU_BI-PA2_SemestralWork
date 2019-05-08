@@ -6,9 +6,7 @@ SW::WorldStats::WorldStats() : _resources(), _resources_limit(), _resources_gain
 }
 
 SW::WorldStats::WorldStats(const Stats & resources)
-    : _resources(resources), _resources_limit(), _resources_gain() {
-    // TODO: Update world stats based on save game
-}
+    : _resources(resources), _resources_limit(), _resources_gain() {}
 
 bool SW::WorldStats::increaseGold(int16_t amount) {
     return WorldStats::increaseFunction(this->_resources.gold, amount, this->_resources_limit.gold);
@@ -53,13 +51,23 @@ bool SW::WorldStats::tick() {
     return this->_resources.grain > 0;
 }
 
+void SW::WorldStats::clear() {
+    this->_resources = {0};
+    this->_resources_gain = {0};
+    this->_resources_limit = {0};
+}
+
+void SW::WorldStats::loadResources(const SW::WorldStats::Stats & resources) {
+    this->_resources = resources;
+}
+
 std::string SW::WorldStats::toString() {
-    return "Gold: " + std::to_string(this->_resources.gold) + " (" + toSignedNumberString(this->_resources_gain.gold) + ") | "
-         + "Silver: " + std::to_string(this->_resources.silver) + " (" + toSignedNumberString(this->_resources_gain.silver) + ") | "
-         + "Copper: " + std::to_string(this->_resources.copper) + " (" + toSignedNumberString(this->_resources_gain.copper) + ") | "
-         + "Iron: " + std::to_string(this->_resources.iron) + " (" + toSignedNumberString(this->_resources_gain.iron) + ") | "
-         + "Wood: " + std::to_string(this->_resources.wood) + " (" + toSignedNumberString(this->_resources_gain.wood) + ") | "
-         + "Grain: " + std::to_string(this->_resources.grain) + " (" + toSignedNumberString(this->_resources_gain.grain) + ")";
+    return "Gold: " + std::to_string(this->_resources.gold) + " (" + toStringShowSign(this->_resources_gain.gold) + ") | "
+         + "Silver: " + std::to_string(this->_resources.silver) + " (" + toStringShowSign(this->_resources_gain.silver) + ") | "
+         + "Copper: " + std::to_string(this->_resources.copper) + " (" + toStringShowSign(this->_resources_gain.copper) + ") | "
+         + "Iron: " + std::to_string(this->_resources.iron) + " (" + toStringShowSign(this->_resources_gain.iron) + ") | "
+         + "Wood: " + std::to_string(this->_resources.wood) + " (" + toStringShowSign(this->_resources_gain.wood) + ") | "
+         + "Grain: " + std::to_string(this->_resources.grain) + " (" + toStringShowSign(this->_resources_gain.grain) + ")";
 }
 
 template<typename T>
@@ -76,4 +84,8 @@ bool SW::WorldStats::increaseFunction(T & var, T amount, T limit) {
     }
     var += amount;
     return true;
+}
+
+void SW::WorldStats::writeToBinaryWriter(SW::BinaryWriter & writer) const {
+    writer.write(this->_resources); // TODO: Fix pointer writing
 }

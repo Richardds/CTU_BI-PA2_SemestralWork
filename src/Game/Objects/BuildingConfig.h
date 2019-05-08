@@ -12,10 +12,11 @@ namespace SW {
     public:
         explicit BuildingConfig(const std::string & config_name);
         bool load(const std::string & config_name);
-        const std::string & getTitle() const;
+        std::string getTitle() const;
         uint8_t getSizeX() const;
         uint8_t getSizeY() const;
         SDL_Color getColor() const;
+        std::string getName() const;
         const WorldStats::Stats & getResourcesGainBase() const;
         const WorldStats::StatsModifier & getResourcesGainModifier() const;
         const WorldStats::Stats & getResourcesLimitIncreaseBase() const;
@@ -25,6 +26,7 @@ namespace SW {
         static const uint8_t SUPPORTED_VERSION = 1;
 
     private:
+        std::string _name;
         std::string _title;
         uint8_t _size_x;
         uint8_t _size_y;

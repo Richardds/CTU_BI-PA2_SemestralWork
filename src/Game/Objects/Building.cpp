@@ -1,17 +1,18 @@
 #include "Building.h"
 #include "../GameLogic.h"
 
-SW::Building::Building(const BuildingConfig * config, SDL_Point position)
+SW::Building::Building(const BuildingConfig * config, Position game_position)
     : Rectangle(
-            config->getSizeX() * GameLogic::TILE_SIZE,
-            config->getSizeY() * GameLogic::TILE_SIZE,
-            GameLogic::convertFromGameCoordinates(position),
+            config->getSizeX() * GameLogic::TILE_SIZE + (config->getSizeX() - 1) * GameLogic::TILE_SPACING,
+            config->getSizeY() * GameLogic::TILE_SIZE + (config->getSizeY() - 1) * GameLogic::TILE_SPACING,
+            GameLogic::convertFromGameCoordinates(game_position),
             config->getColor()),
       _config(config),
+      _game_position(game_position),
       _resources_limit(),
       _resources_gain(),
-      _level(1) {
-    this->setLevel(1); // TODO: Load building level from save game
+      _level(0) {
+    this->setLevel(1); // Trigger resources update
 }
 
 const SW::BuildingConfig * SW::Building::getConfig() const {
@@ -62,6 +63,24 @@ void SW::Building::applyBuildingResourcesGain(SW::WorldStats::Stats & resources)
     resources.grain += this->_resources_gain.grain;
 }
 
+int SW::Building::getGamePositionX() const {
+    return this->_game_position.x;
+}
+
+void SW::Building::setGamePositionX(int game_position_x) {
+    this->_position.x = GameLogic::convertFromGameCoordinate(game_position_x);
+    this->_game_position.x = game_position_x;
+}
+
+int SW::Building::getGamePositionY() const {
+    return this->_game_position.y;
+}
+
+void SW::Building::setGamePositionY(int game_position_y) {
+    this->_position.y = GameLogic::convertFromGameCoordinate(game_position_y);
+    this->_game_position.y = game_position_y;
+}
+
 uint8_t SW::Building::getLevel() const {
     return this->_level;
 }
@@ -70,4 +89,10 @@ void SW::Building::setLevel(uint8_t level) {
     this->_level = level;
     this->updateResourcesLimit();
     this->updateResourcesGain();
+}
+
+void SW::Building::writeToBinaryWriter(SW::BinaryWriter & writer) const {
+    writer.writeString(this->getConfig()->getName());
+    writer.write(this->_game_position);
+    writer.write(this->_level);
 }

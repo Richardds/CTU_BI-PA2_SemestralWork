@@ -1,5 +1,6 @@
 #include "BuildingConfigGenerator.h"
 #include "../System/BinaryWriter.h"
+#include "../Game/Objects/BuildingConfig.h"
 
 bool SW::Tools::BuildingConfigGenerator::generate(const std::string & path,
                                                   const std::string & title,
@@ -10,8 +11,6 @@ bool SW::Tools::BuildingConfigGenerator::generate(const std::string & path,
                                                   const WorldStats::StatsModifier & resources_gain_modifier,
                                                   const SW::WorldStats::Stats & resources_limit_increase_base,
                                                   const WorldStats::StatsModifier & resources_limit_increase_modifier) {
-    const uint8_t version = 1;
-
     _Internal("Generating building config '" + path + "'.");
     BinaryWriter writer;
     if (!writer.open(path)) {
@@ -19,6 +18,7 @@ bool SW::Tools::BuildingConfigGenerator::generate(const std::string & path,
         return false;
     }
     writer.write(Magic::BUILDING_CONFIG);
+    uint8_t version = BuildingConfig::SUPPORTED_VERSION;
     writer.write(version);
     writer.writeString(title);
     writer.write(size_x);

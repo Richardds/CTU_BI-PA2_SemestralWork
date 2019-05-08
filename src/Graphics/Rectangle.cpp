@@ -5,7 +5,7 @@ SW::Rectangle::Rectangle() : Entity(), _width(100), _height(100), _color() {
     //
 }
 
-SW::Rectangle::Rectangle(int width, int height, SDL_Point position, SDL_Color color)
+SW::Rectangle::Rectangle(int width, int height, Position position, SDL_Color color)
     : Entity(position),
       _width(width),
       _height(height),
@@ -37,7 +37,7 @@ void SW::Rectangle::setHeight(int height) {
     this->_height = height;
 }
 
-bool SW::Rectangle::overlapsPoint(SDL_Point point) {
+bool SW::Rectangle::overlapsPoint(Position point) {
     int left = this->getPositionX();
     int right = left + this->getWidth();
     int top = this->getPositionY();

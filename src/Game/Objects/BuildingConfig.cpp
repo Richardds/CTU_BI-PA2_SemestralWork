@@ -2,7 +2,8 @@
 #include "../../System/BinaryReader.h"
 
 SW::BuildingConfig::BuildingConfig(const std::string & config_name)
-    : _size_x(1),
+    : _name(config_name),
+      _size_x(1),
       _size_y(1),
       _color(),
       _resources_gain_base(),
@@ -44,7 +45,11 @@ bool SW::BuildingConfig::load(const std::string & config_name) {
     return true;
 }
 
-const std::string & SW::BuildingConfig::getTitle() const {
+std::string SW::BuildingConfig::getName() const {
+    return this->_name;
+}
+
+std::string SW::BuildingConfig::getTitle() const {
     return this->_title;
 }
 

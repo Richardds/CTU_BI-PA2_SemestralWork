@@ -1,9 +1,12 @@
 #include "GameLogic.h"
+#include "../System/BinaryReader.h"
+#include "../System/BinaryWriter.h"
 
 SW::GameLogic::GameLogic(const Window & window)
     : _window(window),
       _tick(TICK_DEFAULT),
       _tick_last(0),
+      _game_time(0),
       _cursor_position({0, 0}),
       _stats() {
     // Load building types
@@ -20,11 +23,18 @@ SW::GameLogic::GameLogic(const Window & window)
 }
 
 SW::GameLogic::~GameLogic() {
-    this->_buildings.clear();
+    this->clearGameState();
     for (auto const & config : this->_building_configs) {
         delete config.second;
     }
     this->_building_configs.clear();
+}
+
+void SW::GameLogic::clearGameState() {
+    this->_tick_last = 0;
+    this->_game_time = 0;
+    this->_buildings.clear();
+    this->_stats.clear();
 }
 
 void SW::GameLogic::loadBuildingConfigs(std::initializer_list<BuildingConfigKeyboardBinding> bindings) {
@@ -37,7 +47,9 @@ void SW::GameLogic::loadBuildingConfigs(std::initializer_list<BuildingConfigKeyb
 
 void SW::GameLogic::process(const Renderer & renderer) {
     if (this->tick()) {
+        this->_game_time += GameLogic::TICK_DEFAULT / 1000;
         this->_stats.updateResourcesFromBuildings(this->_buildings);
+        _Info("Game time of world '" + this->_world_name + "': " + std::to_string(this->_game_time));
         _Info(this->_stats.toString());
         if (!this->_stats.tick()) {
             // You are dead man
@@ -49,17 +61,14 @@ void SW::GameLogic::process(const Renderer & renderer) {
     }
 }
 
-bool SW::GameLogic::build(const std::string & config_name, SDL_Point position) {
+bool SW::GameLogic::build(const std::string & config_name, SW::Position position, uint32_t * building_id) {
     BuildingConfig * config = this->_building_configs[config_name];
     if (config == nullptr) {
         _Error("Cannot build building with nonexistent config '" + config_name + "'.");
         return false;
     }
 
-    // Normalize building coordinates
-    SDL_Point game_coordinates = GameLogic::convertToGameCoordinates(position);
-
-    Building to_build(config, game_coordinates);
+    Building to_build(config, position);
 
     // Check if new building collides with others
     for (const auto & building : this->_buildings) {
@@ -77,14 +86,18 @@ bool SW::GameLogic::build(const std::string & config_name, SDL_Point position) {
     }
 
     // Add building to render queue
-    this->_buildings.add(std::make_shared<Building>(to_build));
+    uint32_t id = this->_buildings.add(std::make_shared<Building>(to_build));
+
+    if (building_id != nullptr) {
+        *building_id = id;
+    }
 
     _Info("Building '" + to_build.getConfig()->getTitle() + "' built on coordinates "
-    + std::to_string(game_coordinates.x) + "x" + std::to_string(game_coordinates.y) + ".");
+    + std::to_string(position.x) + "x" + std::to_string(position.y) + ".");
     return true;
 }
 
-bool SW::GameLogic::destroy(SDL_Point position) {
+bool SW::GameLogic::destroy(SW::Position position) {
     for (const auto & building : this->_buildings) {
         if (building.second->overlapsPoint(position)) {
             this->_buildings.remove(building.first);
@@ -94,18 +107,107 @@ bool SW::GameLogic::destroy(SDL_Point position) {
     return false;
 }
 
-SDL_Point SW::GameLogic::convertToGameCoordinates(SDL_Point point) {
-    double spacing = GameLogic::TILE_SIZE + GameLogic::TILE_SPACING;
+bool SW::GameLogic::save(const std::string & path) {
+    BinaryWriter writer;
+    if (!writer.open(path)) {
+        _Error("Failed to open game state file '" + path + "' for writing.");
+        return false;
+    }
+    writer.write(Magic::GAME_STATE);
+    uint8_t version = GameLogic::SUPPORTED_GAME_STATE_VERSION;
+    writer.write(version);
+    // Write world name
+    writer.writeString(this->_world_name);
+    // Save game time
+    writer.write(this->_game_time);
+    // Write buildings
+    writer.writeDirect((uint16_t)this->_buildings.size());
+    for (const auto & building : this->_buildings) {
+        // Write building ID
+        // NOTE: This value is reserved for future use
+        writer.write(building.first);
+        // Write building state
+        writer.writeObject(building.second.get());
+    }
+    // Write resources
+    writer.writeObject(this->_stats);
+    writer.close();
+    _Info("Game state save to file '" + path + "' successfully.");
+    return true;
+}
+
+bool SW::GameLogic::load(const std::string & path) {
+    BinaryReader reader;
+    if (!reader.open(path)) {
+        _Error("Failed to open game state file '" + path + "' for reading.");
+        return false;
+    }
+    uint32_t magic;
+    reader.read(magic);
+    if (magic != Magic::GAME_STATE) {
+        _Error("Magic mismatch in game state file '" + path + "'.");
+        return false;
+    }
+    uint8_t version;
+    reader.read(version);
+    if (version != GameLogic::SUPPORTED_GAME_STATE_VERSION) {
+        _Error("Unsupported game state file '" + path + "'.");
+        return false;
+    }
+    // Clear game state
+    this->clearGameState();
+    // Read world name
+    reader.readString(this->_world_name);
+    // Read game time
+    reader.read(this->_game_time);
+    // Read buildings
+    uint16_t building_count;
+    uint32_t building_id;
+    std::string building_config;
+    Position building_position = {0, 0};
+    uint8_t building_level;
+    reader.read(building_count);
+    while (--building_count) {
+        // Read building ID
+        // NOTE: We are not using building ID
+        reader.read(building_id);
+        reader.readString(building_config);
+        reader.read(building_position);
+        reader.read(building_level);
+        if (!this->build(building_config, building_position, &building_id)) {
+            _Error("Unable to place building '" + building_config + "' from saved game state.");
+            return false;
+        }
+        this->_buildings.get(building_id)->setLevel(building_level);
+    }
+    WorldStats::Stats resources = {0, 0, 0, 0, 0, 0};
+    reader.read(resources);
+    this->_stats.loadResources(resources);
+
+    _Info("Game state loaded from file '" + path + "' successfully.");
+
+    return true;
+}
+
+uint16_t SW::GameLogic::convertToGameCoordinate(uint16_t coordinate) {
+    return floor((double)coordinate / (GameLogic::TILE_SIZE + GameLogic::TILE_SPACING));
+}
+
+uint16_t SW::GameLogic::convertFromGameCoordinate(uint16_t coordinate) {
+    return (uint16_t)(GameLogic::TILE_SPACING + (GameLogic::TILE_SIZE + GameLogic::TILE_SPACING) * coordinate);
+}
+
+SW::Position SW::GameLogic::convertToGameCoordinates(SW::Position position) {
     return {
-            (int)floor(point.x / spacing),
-            (int)floor(point.y / spacing)
+            GameLogic::convertToGameCoordinate(position.x),
+            GameLogic::convertToGameCoordinate(position.y)
     };
 }
 
-SDL_Point SW::GameLogic::convertFromGameCoordinates(SDL_Point point) {
+SW::Position SW::GameLogic::convertFromGameCoordinates(SW::Position position) {
     return {
-            GameLogic::TILE_SPACING + (GameLogic::TILE_SIZE + GameLogic::TILE_SPACING) * point.x,
-            GameLogic::TILE_SPACING + (GameLogic::TILE_SIZE + GameLogic::TILE_SPACING) * point.y
+            GameLogic::convertFromGameCoordinate(position.x),
+            GameLogic::convertFromGameCoordinate(position.y)
     };
 }
 
@@ -134,6 +236,21 @@ void SW::GameLogic::handleEvent(const SDL_Event & event) {
 }
 
 void SW::GameLogic::handleKeyboard(SDL_Keycode code) {
+    // Handle action keys
+    switch (code) {
+        case SDLK_s:
+            assert(this->save("savegame.bin"));
+            _Info("Game saved!");
+            break;
+        case SDLK_l:
+            assert(this->load("savegame.bin"));
+            _Info("Game loaded!");
+            break;
+        default:
+            break;
+    }
+
+    // Handle building keys
     auto iterator = this->_building_configs_bindings.find(code);
     if (iterator != end(this->_building_configs_bindings)) {
         this->_selected_config = iterator->second;
@@ -145,11 +262,13 @@ void SW::GameLogic::handleMouseClick(const SDL_MouseButtonEvent & click) {
     switch (click.button) {
         case SDL_BUTTON_LEFT:
             // Build new building
-            this->build(this->_selected_config, {click.x, click.y});
+            this->build(this->_selected_config, GameLogic::convertToGameCoordinates({
+                (uint16_t)click.x, (uint16_t)click.y
+            }));
             break;
         case SDL_BUTTON_RIGHT:
             // Destroy existing building
-            this->destroy({click.x, click.y});
+            this->destroy({(uint16_t)click.x, (uint16_t)click.y});
             break;
         default:
             break;

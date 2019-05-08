@@ -4,6 +4,6 @@ SW::Entity::Entity() : HasPosition() {
     //
 }
 
-SW::Entity::Entity(SDL_Point position) : HasPosition(position) {
+SW::Entity::Entity(SW::Position position) : HasPosition(position) {
     //
 }
