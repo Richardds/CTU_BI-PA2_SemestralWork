@@ -19,8 +19,8 @@ namespace SW {
         int getHeight() const;
         void setHeight(int height);
 
-        static const int DEFAULT_WIDTH = 805;
-        static const int DEFAULT_HEIGHT = 630;
+        static const int DEFAULT_WIDTH = 860;
+        static const int DEFAULT_HEIGHT = 680;
 
     private:
         SDL_Window * _window;

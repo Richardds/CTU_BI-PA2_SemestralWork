@@ -163,7 +163,7 @@ bool SW::GameLogic::load(const std::string & path) {
     Position building_position = {0, 0};
     uint8_t building_level;
     reader.read(building_count);
-    while (--building_count) {
+    while (building_count--) {
         // Read building ID
         // NOTE: We are not using building ID
         reader.read(building_id);
@@ -236,11 +236,9 @@ void SW::GameLogic::handleKeyboard(SDL_Keycode code) {
     switch (code) {
         case SDLK_s:
             assert(this->save("savegame.bin"));
-            _Info("Game saved!");
             break;
         case SDLK_l:
             assert(this->load("savegame.bin"));
-            _Info("Game loaded!");
             break;
         default:
             break;
