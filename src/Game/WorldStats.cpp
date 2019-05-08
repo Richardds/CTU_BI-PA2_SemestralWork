@@ -33,11 +33,14 @@ bool SW::WorldStats::increaseGrain(int16_t amount) {
 }
 
 void SW::WorldStats::updateResourcesFromBuildings(const IdentifyingCollection<std::shared_ptr<Building>> & buildings) {
-    this->_resources_limit = {};
-    this->_resources_gain = {};
-    for (auto const & building : buildings) {
-        building.second->applyBuildingResourcesLimit(this->_resources_limit);
-        building.second->applyBuildingResourcesGain(this->_resources_gain);
+    this->_resources_limit = {0};
+    this->_resources_gain = {0};
+    for (const auto & building : buildings) {
+        // Process built buildings only
+        if (building.second->isBuilt()) {
+            building.second->applyBuildingResourcesLimit(this->_resources_limit);
+            building.second->applyBuildingResourcesGain(this->_resources_gain);
+        }
     }
 }
 

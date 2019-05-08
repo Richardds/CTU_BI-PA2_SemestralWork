@@ -48,11 +48,19 @@ void SW::GameLogic::loadBuildingConfigs(std::initializer_list<BuildingConfigKeyb
 void SW::GameLogic::process(const Renderer & renderer) {
     if (this->tick()) {
         this->_game_time += GameLogic::TICK_DEFAULT / 1000;
+        // Update buildings status
+        for (auto const & building : this->_buildings) {
+            building.second->tick();
+        }
+        // Update resources from buildings
         this->_stats.updateResourcesFromBuildings(this->_buildings);
+        // Print agme status
         _Info("Game time: " + std::to_string(this->_game_time));
         _Info(this->_stats.toString());
+        // Update resources
         if (!this->_stats.tick()) {
-            // You are dead man
+            // Village does not have enough grain
+            // TODO: Start dead timer
         }
     }
     // Render the world
@@ -92,8 +100,8 @@ bool SW::GameLogic::build(const std::string & config_name, SW::Position position
         *building_id = id;
     }
 
-    _Info("Building '" + to_build.getConfig()->getTitle() + "' built on coordinates "
-    + std::to_string(position.x) + "x" + std::to_string(position.y) + ".");
+    _Info("Building '" + to_build.getConfig()->getTitle() + "' built on coordinates ["
+    + std::to_string(position.x) + "," + std::to_string(position.y) + "].");
     return true;
 }
 
@@ -113,6 +121,7 @@ bool SW::GameLogic::save(const std::string & path) {
         _Error("Failed to open game state file '" + path + "' for writing.");
         return false;
     }
+    // Write save state metadata
     writer.write(Magic::GAME_STATE);
     uint8_t version = GameLogic::SUPPORTED_GAME_STATE_VERSION;
     writer.write(version);
@@ -140,6 +149,7 @@ bool SW::GameLogic::load(const std::string & path) {
         _Error("Failed to open game state file '" + path + "' for reading.");
         return false;
     }
+    // Validate save state metadata
     uint32_t magic;
     reader.read(magic);
     if (magic != Magic::GAME_STATE) {
@@ -162,6 +172,7 @@ bool SW::GameLogic::load(const std::string & path) {
     std::string building_config;
     Position building_position = {0, 0};
     uint8_t building_level;
+    uint16_t building_construction_time_left;
     reader.read(building_count);
     while (building_count--) {
         // Read building ID
@@ -170,11 +181,15 @@ bool SW::GameLogic::load(const std::string & path) {
         reader.readString(building_config);
         reader.read(building_position);
         reader.read(building_level);
+        reader.read(building_construction_time_left);
         if (!this->build(building_config, building_position, &building_id)) {
             _Error("Unable to place building '" + building_config + "' from saved game state.");
             return false;
         }
-        this->_buildings.get(building_id)->setLevel(building_level);
+        // Set building post-construction attributes
+        std::shared_ptr<Building> building = this->_buildings.get(building_id);
+        building->setLevel(building_level);
+        building->setBuiltInTicks(building_construction_time_left);
     }
     WorldStats::Stats resources = {0, 0, 0, 0, 0, 0};
     reader.read(resources);
@@ -234,10 +249,16 @@ void SW::GameLogic::handleEvent(const SDL_Event & event) {
 void SW::GameLogic::handleKeyboard(SDL_Keycode code) {
     // Handle action keys
     switch (code) {
+        case SDLK_n:
+            // Start new game
+            this->clearGameState();
+            break;
         case SDLK_s:
+            // Save game state
             assert(this->save("savegame.bin"));
             break;
         case SDLK_l:
+            // Load existing game state
             assert(this->load("savegame.bin"));
             break;
         default:

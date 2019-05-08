@@ -15,6 +15,7 @@ namespace SW {
         std::string getTitle() const;
         uint8_t getSizeX() const;
         uint8_t getSizeY() const;
+        uint16_t getBuildTime() const;
         SDL_Color getColor() const;
         std::string getName() const;
         const WorldStats::Stats & getResourcesGainBase() const;
@@ -22,7 +23,7 @@ namespace SW {
         const WorldStats::Stats & getResourcesLimitIncreaseBase() const;
         const WorldStats::StatsModifier & getResourcesLimitIncreaseModifier() const;
 
-        static constexpr const char * BUILDINGS_CONFIG_PATH = "data/buildings/";
+        static constexpr const char * BUILDINGS_CONFIG_PATH = "buildings/";
         static const uint8_t SUPPORTED_VERSION = 1;
 
     private:
@@ -30,6 +31,7 @@ namespace SW {
         std::string _title;
         uint8_t _size_x;
         uint8_t _size_y;
+        uint16_t _build_time;
         SDL_Color _color;
         const WorldStats::Stats _resources_gain_base;
         const WorldStats::StatsModifier _resources_gain_modifier;

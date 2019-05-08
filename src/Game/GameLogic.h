@@ -33,7 +33,7 @@ namespace SW {
         static Position convertToGameCoordinates(Position position);
         static Position convertFromGameCoordinates(Position position);
 
-        static const uint32_t TICK_DEFAULT = 5000;
+        static const uint32_t TICK_DEFAULT = 2000;
         static const uint16_t TILE_SIZE = 40;
         static const uint16_t TILE_SPACING = 5;
         static const uint8_t SUPPORTED_GAME_STATE_VERSION = 1;

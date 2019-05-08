@@ -24,9 +24,7 @@ Hra bude načítavať konfiguráciu rôznych budov z binárneho súboru.
 V tomto súbore sa nachádzajú surovinové podiely na jeden konkrétny typ
 bodovy. Keďže je budovy možné vylepšovať, súbor obsahuje aj relatívny rast
 surovín na základe stupňa boduvy. Stavba každej budovy sa može časovo líšiť.
-Čas potrebný na postavenie budovy sa náhodne vygeneruje z vopred daného rozmedzia
-podľa typu budovy. Pokiaľ je budova v stave výstavby, jej produkcia
-surovin je pozastavená.
+Pokiaľ je budova v stave výstavby, jej produkcia surovin je pozastavená.
 
 Hru je možné počas behu uložiť. Takzvaný "savegame" je binárny súbor, ktorý
 obsahuje rozostavenie budov po dedine, ich stupne a ďalej samozrejme

@@ -5,6 +5,7 @@ SW::BuildingConfig::BuildingConfig(const std::string & config_name)
     : _name(config_name),
       _size_x(1),
       _size_y(1),
+      _build_time(0),
       _color(),
       _resources_gain_base(),
       _resources_gain_modifier(),
@@ -17,7 +18,7 @@ bool SW::BuildingConfig::load(const std::string & config_name) {
     _Info("Loading building config file '" + config_name + "'.");
     BinaryReader reader;
 
-    if (!reader.open(BUILDINGS_CONFIG_PATH + config_name + ".bcfg")) {
+    if (!reader.open(BuildingConfig::BUILDINGS_CONFIG_PATH + config_name + ".bcfg")) {
         _Error("Failed to open building config file '" + config_name + "'.");
         return false;
     }
@@ -36,6 +37,7 @@ bool SW::BuildingConfig::load(const std::string & config_name) {
     reader.readString(this->_title);
     reader.read(this->_size_x);
     reader.read(this->_size_y);
+    reader.read(this->_build_time);
     reader.read(this->_color);
     reader.read(this->_resources_gain_base);
     reader.read(this->_resources_gain_modifier);
@@ -59,6 +61,10 @@ uint8_t SW::BuildingConfig::getSizeX() const {
 
 uint8_t SW::BuildingConfig::getSizeY() const {
     return this->_size_y;
+}
+
+uint16_t SW::BuildingConfig::getBuildTime() const {
+    return this->_build_time;
 }
 
 SDL_Color SW::BuildingConfig::getColor() const {

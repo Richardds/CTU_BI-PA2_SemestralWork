@@ -6,12 +6,14 @@ SW::Building::Building(const BuildingConfig * config, Position game_position)
             config->getSizeX() * GameLogic::TILE_SIZE + (config->getSizeX() - 1) * GameLogic::TILE_SPACING,
             config->getSizeY() * GameLogic::TILE_SIZE + (config->getSizeY() - 1) * GameLogic::TILE_SPACING,
             GameLogic::convertFromGameCoordinates(game_position),
-            config->getColor()),
+            {0, 0, 0}),
       _config(config),
       _game_position(game_position),
       _resources_limit(),
       _resources_gain(),
-      _level(0) {
+      _level(0),
+      _built(false),
+      _construction_time_left(config->getBuildTime()) {
     this->setLevel(1); // Trigger resources update
 }
 
@@ -95,4 +97,34 @@ void SW::Building::writeToBinaryWriter(SW::BinaryWriter & writer) const {
     writer.writeString(this->getConfig()->getName());
     writer.write(this->_game_position);
     writer.write(this->_level);
+    writer.write(this->_construction_time_left);
+}
+
+bool SW::Building::isBuilt() const {
+    return this->_built;
+}
+
+void SW::Building::setBuiltInTicks(uint16_t ticks) {
+    if (ticks == 0) {
+        this->_built = true;
+        this->_color = this->getConfig()->getColor();
+        return;
+    }
+    this->_built = false;
+    this->_construction_time_left = ticks;
+    this->_color = {0, 0, 0};
+}
+
+void SW::Building::tick() {
+    // Update build status
+    if (!this->_built && this->_construction_time_left != 0) {
+        this->_construction_time_left--;
+        if (this->_construction_time_left == 0) {
+            this->_built = true;
+        }
+    }
+    // Update building color
+    if (this->_built) {
+        this->_color = this->getConfig()->getColor();
+    }
 }

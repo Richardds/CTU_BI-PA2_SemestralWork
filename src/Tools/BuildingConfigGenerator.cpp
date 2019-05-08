@@ -6,6 +6,7 @@ bool SW::Tools::BuildingConfigGenerator::generate(const std::string & path,
                                                   const std::string & title,
                                                   uint8_t size_x,
                                                   uint8_t size_y,
+                                                  uint16_t build_time,
                                                   SDL_Color color,
                                                   const SW::WorldStats::Stats & resources_gain_base,
                                                   const WorldStats::StatsModifier & resources_gain_modifier,
@@ -23,6 +24,7 @@ bool SW::Tools::BuildingConfigGenerator::generate(const std::string & path,
     writer.writeString(title);
     writer.write(size_x);
     writer.write(size_y);
+    writer.write(build_time);
     writer.write(color);
     writer.write(resources_gain_base);
     writer.write(resources_gain_modifier);

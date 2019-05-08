@@ -8,7 +8,7 @@
 namespace SW {
     class Building : public Rectangle, public Exportable {
     public:
-        explicit Building(const BuildingConfig * config, Position game_position);
+        Building(const BuildingConfig * config, Position game_position);
         const BuildingConfig * getConfig() const;
         void updateResourcesLimit();
         void updateResourcesGain();
@@ -20,6 +20,9 @@ namespace SW {
         void setGamePositionY(int game_position_y);
         uint8_t getLevel() const;
         void setLevel(uint8_t level);
+        bool isBuilt() const;
+        void setBuiltInTicks(uint16_t ticks);
+        void tick();
 
         void writeToBinaryWriter(BinaryWriter & reader) const override;
 
@@ -29,6 +32,8 @@ namespace SW {
         WorldStats::Stats _resources_limit;
         WorldStats::Stats _resources_gain;
         uint8_t _level;
+        uint16_t _construction_time_left;
+        bool _built;
     };
 }
 

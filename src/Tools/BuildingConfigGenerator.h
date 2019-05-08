@@ -14,6 +14,7 @@ namespace SW {
                                  const std::string & title,
                                  uint8_t size_x,
                                  uint8_t size_y,
+                                 uint16_t build_time,
                                  SDL_Color color,
                                  const WorldStats::Stats & resources_gain_base,
                                  const WorldStats::StatsModifier & resources_gain_modifier,
