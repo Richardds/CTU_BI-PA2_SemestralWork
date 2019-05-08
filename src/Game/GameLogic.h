@@ -40,7 +40,6 @@ namespace SW {
 
     private:
         const Window & _window;
-        std::string _world_name;
         uint32_t _tick;
         uint32_t _tick_last;
         uint32_t _game_time;

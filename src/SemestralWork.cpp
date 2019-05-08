@@ -1,6 +1,6 @@
 #include "SemestralWork.h"
 
-SW::SemestralWork::SemestralWork() : _window(Window::DEFAULT_WIDTH, Window::DEFAULT_HEIGHT), _game(_window), _close(true) {
+SW::SemestralWork::SemestralWork() : _window(Window::DEFAULT_WIDTH, Window::DEFAULT_HEIGHT), _game(_window), _close(false) {
     this->_window.setTitle("BI-PA2: Semestral work | Richard Boldis (boldiric)");
 }
 

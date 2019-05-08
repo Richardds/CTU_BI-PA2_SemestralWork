@@ -49,7 +49,7 @@ void SW::GameLogic::process(const Renderer & renderer) {
     if (this->tick()) {
         this->_game_time += GameLogic::TICK_DEFAULT / 1000;
         this->_stats.updateResourcesFromBuildings(this->_buildings);
-        _Info("Game time of world '" + this->_world_name + "': " + std::to_string(this->_game_time));
+        _Info("Game time: " + std::to_string(this->_game_time));
         _Info(this->_stats.toString());
         if (!this->_stats.tick()) {
             // You are dead man
@@ -116,8 +116,6 @@ bool SW::GameLogic::save(const std::string & path) {
     writer.write(Magic::GAME_STATE);
     uint8_t version = GameLogic::SUPPORTED_GAME_STATE_VERSION;
     writer.write(version);
-    // Write world name
-    writer.writeString(this->_world_name);
     // Save game time
     writer.write(this->_game_time);
     // Write buildings
@@ -156,8 +154,6 @@ bool SW::GameLogic::load(const std::string & path) {
     }
     // Clear game state
     this->clearGameState();
-    // Read world name
-    reader.readString(this->_world_name);
     // Read game time
     reader.read(this->_game_time);
     // Read buildings
