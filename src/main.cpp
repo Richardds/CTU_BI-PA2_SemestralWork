@@ -2,14 +2,13 @@
 
 #include "SemestralWork.h"
 #include "Tools/BuildingConfigGenerator.h"
-
-#include "generate.h"
+#include "BuildingGenerator.h"
 
 using namespace SW;
 
 int main() {
     // Generate default building types for project demonstration
-    SW::generate();
+    SW::BuildingGenerator::generate();
 
     SemestralWork application;
 

@@ -9,11 +9,9 @@ CC = g++
 CXXFLAGS = -Wall -pedantic -std=c++11
 LDFLAGS = -lSDL2
 
-all:
-	# TODO: Do everything
+all: compile doc
 
-compile:
-	make $(username)
+compile: $(username)
 
 run:
 	./$(USERNAME)
@@ -30,31 +28,44 @@ doc:
 $(USERNAME): obj/$(USERNAME).o
 	$(CC) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
-obj/$(USERNAME).o: obj/main.o obj/SemestralWork.o obj/generate.o obj/Core/core.o obj/Core/Renderer.o obj/Core/Window.o obj/Game/Objects/Building.o obj/Game/Objects/BuildingConfig.o obj/Game/Exportable.o obj/Game/GameLogic.o obj/Game/WorldStats.o obj/Graphics/Entity.o obj/Graphics/HasPosition.o obj/Graphics/Rectangle.o obj/System/Containers/IdentifyingCollection.o obj/System/BinaryReader.o obj/System/BinaryWriter.o obj/System/Logger.o obj/System/Trace.o obj/Tools/BuildingConfigGenerator.o
+obj/$(USERNAME).o: obj/main.o obj/BuildingGenerator.o obj/SemestralWork.o obj/Core/Renderer.o obj/Core/Window.o obj/Game/Objects/Building.o obj/Game/Objects/BuildingConfig.o obj/Game/GameLogic.o obj/Game/WorldStats.o obj/Graphics/Entity.o obj/Graphics/HasPosition.o obj/Graphics/Rectangle.o obj/System/Containers/IdentifyingCollection.o obj/System/BinaryReader.o obj/System/BinaryWriter.o obj/System/Logger.o obj/System/Trace.o obj/Tools/BuildingConfigGenerator.o
 	ld -r $^ -o $@
 
-obj/main.o: src/main.cpp src/SemestralWork.h src/Core/core.h \
- src/Core/../System/Trace.h src/Core/../System/Logger.h \
- src/Core/../System/Trace.h src/Core/Window.h src/Core/Renderer.h \
- src/Core/Window.h src/Core/core.h src/Core/../Graphics/Entity.h \
- src/Core/../Graphics/HasPosition.h src/Core/../Graphics/../Core/core.h \
- src/Core/../Graphics/../Core/Renderer.h src/Game/GameLogic.h \
- src/Game/../Core/Renderer.h src/Game/../Core/core.h \
+obj/main.o: src/main.cpp \
+ src/SemestralWork.h \
+ src/Core/core.h \
+ src/System/Trace.h \
+ src/System/Logger.h \
+ src/Core/Window.h \
+ src/Core/Renderer.h \
+ src/Graphics/Entity.h \
+ src/Graphics/HasPosition.h \
+ src/Core/Renderer.h src/Game/GameLogic.h \
  src/Game/WorldStats.h \
- src/Game/../System/Containers/IdentifyingCollection.h \
- src/Game/../System/Containers/../../Core/core.h src/Game/Exportable.h \
- src/Game/../System/BinaryReader.h \
- src/Game/../System/../Game/Exportable.h \
- src/Game/../System/BinaryWriter.h src/Game/Objects/BuildingConfig.h \
- src/Game/Objects/../../Core/core.h src/Game/Objects/../WorldStats.h \
- src/Game/Objects/Building.h src/Game/Objects/../../Graphics/Rectangle.h \
- src/Game/Objects/../../Graphics/Entity.h \
- src/Game/Objects/../../Graphics/HasPosition.h \
- src/Game/Objects/../../Graphics/../Core/Window.h \
- src/Game/Objects/../../Graphics/../Core/core.h \
- src/Game/Objects/BuildingConfig.h src/Tools/BuildingConfigGenerator.h \
- src/Tools/../Core/core.h src/Tools/../Game/WorldStats.h src/generate.h \
- src/Game/Objects/BuildingConfig.h
+ src/System/Containers/IdentifyingCollection.h \
+ src/Game/Exportable.h \
+ src/System/BinaryReader.h \
+ src/System/BinaryWriter.h \
+ src/Game/Objects/BuildingConfig.h \
+ src/Game/Objects/Building.h \
+ src/Graphics/Rectangle.h \
+ src/Tools/BuildingConfigGenerator.h \
+ src/BuildingGenerator.h
+	$(CC) $(CXXFLAGS) -c $< -o $@
+
+obj/BuildingGenerator.o: src/BuildingGenerator.cpp \
+ src/BuildingGenerator.h \
+ src/Tools/BuildingConfigGenerator.h \
+ src/Core/core.h \
+ src/System/Trace.h \
+ src/System/Logger.h \
+ src/Game/WorldStats.h \
+ src/System/Containers/IdentifyingCollection.h \
+ src/Game/Exportable.h \
+ src/System/BinaryReader.h \
+ src/System/BinaryWriter.h \
+ src/Game/Objects/BuildingConfig.h \
+ src/Game/WorldStats.h
 	$(CC) $(CXXFLAGS) -c $< -o $@
 
 obj/SemestralWork.o: src/SemestralWork.cpp src/SemestralWork.h \
@@ -77,25 +88,6 @@ obj/SemestralWork.o: src/SemestralWork.cpp src/SemestralWork.h \
  src/Game/Objects/../../Graphics/../Core/Window.h \
  src/Game/Objects/../../Graphics/../Core/core.h \
  src/Game/Objects/BuildingConfig.h
-	$(CC) $(CXXFLAGS) -c $< -o $@
-
-obj/generate.o: src/generate.h src/Tools/BuildingConfigGenerator.h \
- src/Tools/../Core/core.h src/Tools/../Core/../System/Trace.h \
- src/Tools/../Core/../System/Logger.h src/Tools/../Core/../System/Trace.h \
- src/Tools/../Game/WorldStats.h src/Tools/../Game/../Core/core.h \
- src/Tools/../Game/../System/Containers/IdentifyingCollection.h \
- src/Tools/../Game/../System/Containers/../../Core/core.h \
- src/Tools/../Game/Exportable.h \
- src/Tools/../Game/../System/BinaryReader.h \
- src/Tools/../Game/../System/../Game/Exportable.h \
- src/Tools/../Game/../System/BinaryWriter.h \
- src/Game/Objects/BuildingConfig.h src/Game/Objects/../../Core/core.h \
- src/Game/Objects/../WorldStats.h
-	$(CC) $(CXXFLAGS) -c $< -o $@
-
-obj/Core/core.o: src/Core/core.h src/Core/../System/Trace.h \
- src/Core/../System/Logger.h src/Core/../System/Trace.h
-	mkdir -p obj/Core
 	$(CC) $(CXXFLAGS) -c $< -o $@
 
 obj/Core/Renderer.o: src/Core/Renderer.cpp src/Core/Renderer.h src/Core/Window.h \
@@ -152,12 +144,6 @@ obj/Game/Objects/BuildingConfig.o: src/Game/Objects/BuildingConfig.cpp \
  src/Game/Objects/../../System/BinaryWriter.h \
  src/Game/Objects/../../System/BinaryReader.h
 	mkdir -p obj/Game/Objects
-	$(CC) $(CXXFLAGS) -c $< -o $@
-
-obj/Game/Exportable.o: src/Game/Exportable.h src/Game/../System/BinaryReader.h \
- src/Game/../System/../Game/Exportable.h \
- src/Game/../System/BinaryWriter.h
-	mkdir -p obj/Game
 	$(CC) $(CXXFLAGS) -c $< -o $@
 
 obj/Game/GameLogic.o: src/Game/GameLogic.cpp src/Game/GameLogic.h \
@@ -233,7 +219,8 @@ obj/Graphics/Rectangle.o: src/Graphics/Rectangle.cpp src/Graphics/Rectangle.h \
 	mkdir -p obj/Graphics
 	$(CC) $(CXXFLAGS) -c $< -o $@
 
-obj/System/Containers/IdentifyingCollection.o: src/System/Containers/IdentifyingCollection.h \
+obj/System/Containers/IdentifyingCollection.o: src/System/Containers/IdentifyingCollection.cpp \
+ src/System/Containers/IdentifyingCollection.h \
  src/System/Containers/../../Core/core.h \
  src/System/Containers/../../Core/../System/Trace.h \
  src/System/Containers/../../Core/../System/Logger.h \
