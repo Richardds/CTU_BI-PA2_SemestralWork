@@ -41,6 +41,7 @@ namespace SW {
 
     private:
         const Window & _window;
+        bool _running;
         uint32_t _tick;
         uint32_t _tick_last;
         uint32_t _game_time;
@@ -56,6 +57,8 @@ namespace SW {
         void handleKeyboard(SDL_Keycode code);
         void handleMouseClick(const SDL_MouseButtonEvent & click);
         void loadBuildingConfigs(std::initializer_list<BuildingConfigKeyboardBinding> bindings);
+        void start();
+        void stop();
     };
 }
 

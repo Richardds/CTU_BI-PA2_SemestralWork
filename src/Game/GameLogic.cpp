@@ -4,6 +4,7 @@
 
 SW::GameLogic::GameLogic(const Window & window)
     : _window(window),
+      _running(true),
       _tick(TICK_DEFAULT),
       _tick_last(0),
       _game_time(0),
@@ -34,7 +35,7 @@ void SW::GameLogic::clearGameState() {
     this->_tick_last = 0;
     this->_game_time = 0;
     this->_buildings.clear();
-    this->_stats.clear();
+    this->_stats.reset();
 }
 
 void SW::GameLogic::loadBuildingConfigs(std::initializer_list<BuildingConfigKeyboardBinding> bindings) {
@@ -46,7 +47,7 @@ void SW::GameLogic::loadBuildingConfigs(std::initializer_list<BuildingConfigKeyb
 }
 
 void SW::GameLogic::process(const Renderer & renderer) {
-    if (this->tick()) {
+    if (this->_running && this->tick()) {
         this->_game_time += GameLogic::TICK_DEFAULT / 1000;
         // Update buildings status
         for (auto const & building : this->_buildings) {
@@ -54,13 +55,18 @@ void SW::GameLogic::process(const Renderer & renderer) {
         }
         // Update resources from buildings
         this->_stats.updateResourcesFromBuildings(this->_buildings);
-        // Print agme status
+        // Print game status
         _Info("Game time: " + std::to_string(this->_game_time));
         _Info(this->_stats.toString());
         // Update resources
         if (!this->_stats.tick()) {
             // Village does not have enough grain
-            // TODO: Start dead timer
+            this->stop();
+            _Info("");
+            _Info(this->_stats.toString(true));
+            _Info("");
+            _Info("Game over! Your village does not have enough grain.");
+            _Info("");
         }
     }
     // Render the world
@@ -280,6 +286,7 @@ void SW::GameLogic::handleKeyboard(SDL_Keycode code) {
         case SDLK_n:
             // Start new game
             this->clearGameState();
+            this->start();
             break;
         case SDLK_s:
             // Save game state
@@ -302,6 +309,9 @@ void SW::GameLogic::handleKeyboard(SDL_Keycode code) {
 }
 
 void SW::GameLogic::handleMouseClick(const SDL_MouseButtonEvent & click) {
+    if (!this->_running) {
+        return;
+    }
     switch (click.button) {
         case SDL_BUTTON_LEFT:
             // Build new building
@@ -320,4 +330,12 @@ void SW::GameLogic::handleMouseClick(const SDL_MouseButtonEvent & click) {
         default:
             break;
     }
+}
+
+void SW::GameLogic::start() {
+    this->_running = true;
+}
+
+void SW::GameLogic::stop() {
+    this->_running = false;
 }

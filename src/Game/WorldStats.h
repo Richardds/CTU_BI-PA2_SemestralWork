@@ -29,7 +29,6 @@ namespace SW {
         };
         friend struct WorldStats::Stats;
         WorldStats();
-        explicit WorldStats(const Stats & resources);
         bool increaseGold(int16_t amount);
         bool increaseSilver(int16_t amount);
         bool increaseCopper(int16_t amount);
@@ -38,14 +37,15 @@ namespace SW {
         bool increaseGrain(int16_t amount);
         void updateResourcesFromBuildings(const IdentifyingCollection<std::shared_ptr<Building>> & buildings);
         bool tick();
-        void clear();
+        void reset();
         void loadResources(const Stats & resources);
-        std::string toString();
+        std::string toString(bool population_only = false);
 
         void writeToBinaryWriter(BinaryWriter & writer) const override;
 
     private:
         template<typename T> bool increaseFunction(T & var, T amount, T limit);
+        uint16_t _population;
         Stats _resources;
         Stats _resources_gain;
         Stats _resources_limit;

@@ -158,3 +158,10 @@ void SW::Building::draw(const SW::Renderer & renderer) const {
         y += 15;
     }
 }
+
+uint16_t SW::Building::getPopulation() {
+    if (this->_config->getName() == "house") {
+        return floor(2 * this->_level * 1.5);
+    }
+    return 0;
+}

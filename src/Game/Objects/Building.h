@@ -24,6 +24,7 @@ namespace SW {
         bool isBuilt() const;
         void setBuiltInTicks(uint16_t ticks);
         void tick();
+        uint16_t getPopulation();
 
         void draw(const Renderer & renderer) const override;
 

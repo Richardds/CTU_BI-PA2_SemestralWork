@@ -10,7 +10,7 @@ namespace SW {
                 1,
                 {202, 84, 98},
 
-                {.gold = 0, .silver = 1, .copper = 3, .iron = 0, .wood = 0, .grain = -2},
+                {.gold = 0, .silver = 1, .copper = 3, .iron = 0, .wood = 0, .grain = 0},
                 {1, 1.8, 2.3, 1, 1, 1.3},
 
                 {.gold = 10, .silver = 50, .copper = 100, .iron = 0, .wood = 0, .grain = 50},
@@ -66,7 +66,7 @@ namespace SW {
                 4,
                 {248, 185, 36},
 
-                {.gold = 0, .silver = 0, .copper = 0, .iron = 0, .wood = 0, .grain = 18},
+                {.gold = 0, .silver = 0, .copper = 0, .iron = 0, .wood = 0, .grain = 5},
                 {1, 1, 1, 1, 1, 1.8},
 
                 {.gold = 0, .silver = 0, .copper = 0, .iron = 0, .wood = 20, .grain = 100},
