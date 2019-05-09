@@ -1,7 +1,7 @@
 #ifndef SEMESTRALWORK_HASPOSITION_H
 #define SEMESTRALWORK_HASPOSITION_H
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 #include "../Core/core.h"
 
 namespace SW {

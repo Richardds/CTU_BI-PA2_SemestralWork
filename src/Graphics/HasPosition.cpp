@@ -1,4 +1,3 @@
-#include <SDL_rect.h>
 #include "HasPosition.h"
 
 SW::HasPosition::HasPosition() : _position({0, 0}) {}

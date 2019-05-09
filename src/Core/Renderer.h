@@ -1,7 +1,7 @@
 #ifndef SEMESTRALWORK_RENDERER_H
 #define SEMESTRALWORK_RENDERER_H
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 #include "Window.h"
 #include "core.h"
 #include "../Graphics/Entity.h"

@@ -1,3 +1,6 @@
+#ifndef SEMESTRALWORK_GENERATE_H
+#define SEMESTRALWORK_GENERATE_H
+
 #include "Tools/BuildingConfigGenerator.h"
 #include "Game/Objects/BuildingConfig.h"
 
@@ -74,3 +77,5 @@ namespace SW {
         );
     }
 }
+
+#endif

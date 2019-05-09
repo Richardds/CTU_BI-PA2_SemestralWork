@@ -3,7 +3,7 @@
 #include "SemestralWork.h"
 #include "Tools/BuildingConfigGenerator.h"
 
-#include "generate.cpp"
+#include "generate.h"
 
 using namespace SW;
 
