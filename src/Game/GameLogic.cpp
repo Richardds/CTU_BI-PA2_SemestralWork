@@ -107,7 +107,7 @@ bool SW::GameLogic::build(const std::string & config_name, SW::Position position
 
 bool SW::GameLogic::upgrade(SW::Position position) {
     uint32_t building_id = this->buildingClicked(position);
-    if (building_id < 0) {
+    if (building_id == 0) {
         return false;
     }
     std::shared_ptr<Building> building = this->_buildings.get(building_id);
@@ -127,7 +127,7 @@ bool SW::GameLogic::upgrade(SW::Position position) {
 
 bool SW::GameLogic::destroy(SW::Position position) {
     uint32_t building_id = this->buildingClicked(position);
-    if (building_id < 0) {
+    if (building_id == 0) {
         return false;
     }
     this->_buildings.remove(building_id);
@@ -256,7 +256,7 @@ uint32_t SW::GameLogic::buildingClicked(SW::Position position) {
             return building.first;
         }
     }
-    return -1;
+    return 0;
 }
 
 void SW::GameLogic::handleEvent(const SDL_Event & event) {

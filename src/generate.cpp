@@ -8,7 +8,7 @@ namespace SW {
                 "City Hall",
                 3, 2,
                 1,
-                {255, 0, 0},
+                {202, 84, 98},
 
                 {.gold = 0, .silver = 1, .copper = 3, .iron = 0, .wood = 0, .grain = -2},
                 {1, 1.8, 2.3, 1, 1, 1.3},
@@ -22,7 +22,7 @@ namespace SW {
                 "House",
                 1, 1,
                 2,
-                {0, 255, 0},
+                {84, 202, 188},
 
                 {.gold = 0, .silver = 1, .copper = 5, .iron = 0, .wood = 0, .grain = -1},
                 {1, 1, 1.1, 1, 1, 1.5},
@@ -36,7 +36,7 @@ namespace SW {
                 "Mine",
                 2, 2,
                 4,
-                {0, 0, 255},
+                {170, 170, 170},
 
                 {.gold = 1, .silver = 3, .copper = 10, .iron = 8, .wood = 0, .grain = -3},
                 {1.5, 1.5, 1.5, 1.5, 1, 1.3},
@@ -50,7 +50,7 @@ namespace SW {
                 "Lumber Mill",
                 2, 2,
                 4,
-                {255, 0, 255},
+                {205, 186, 150},
 
                 {.gold = 0, .silver = 0, .copper = 0, .iron = 0, .wood = 5, .grain = -3},
                 {1, 1, 1, 1, 1.5, 1.3},
@@ -64,7 +64,7 @@ namespace SW {
                 "Farm",
                 4, 5,
                 4,
-                {255, 255, 0},
+                {248, 185, 36},
 
                 {.gold = 0, .silver = 0, .copper = 0, .iron = 0, .wood = 0, .grain = 18},
                 {1, 1, 1, 1, 1, 1.8},

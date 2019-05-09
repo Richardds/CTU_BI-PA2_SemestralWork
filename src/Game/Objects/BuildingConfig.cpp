@@ -1,6 +1,8 @@
 #include "BuildingConfig.h"
 #include "../../System/BinaryReader.h"
 
+const char * SW::BuildingConfig::BUILDINGS_CONFIG_PATH = "buildings/";
+
 SW::BuildingConfig::BuildingConfig(const std::string & config_name)
     : _name(config_name),
       _size_x(1),

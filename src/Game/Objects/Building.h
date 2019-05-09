@@ -25,9 +25,13 @@ namespace SW {
         void setBuiltInTicks(uint16_t ticks);
         void tick();
 
+        void draw(const Renderer & renderer) const override;
+
         void writeToBinaryWriter(BinaryWriter & reader) const override;
 
-        static const uint8_t MAX_LEVEL = 4;
+        static const uint8_t MAX_LEVEL = 5;
+        static const SDL_Color CONSTRUCTION_COLOR;
+        static const SDL_Color LEVEL_BADGE_COLOR;
 
     private:
         const BuildingConfig * _config;

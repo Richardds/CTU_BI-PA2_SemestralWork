@@ -28,7 +28,7 @@ void SW::Renderer::prepare() {
     uint32_t current_frame_time = SDL_GetTicks();
     time_delta = (double)(current_frame_time - this->last_frame_time) / 1000;
     this->last_frame_time = SDL_GetTicks();
-    this->setRenderingColor(SDL_Color{200, 200, 200, 255});
+    this->setRenderingColor(SDL_Color{80, 150, 80, 255});
     SDL_RenderClear(this->_renderer);
 }
 

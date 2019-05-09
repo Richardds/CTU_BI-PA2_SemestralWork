@@ -23,7 +23,7 @@ namespace SW {
         const WorldStats::Stats & getResourcesLimitIncreaseBase() const;
         const WorldStats::StatsModifier & getResourcesLimitIncreaseModifier() const;
 
-        static constexpr const char * BUILDINGS_CONFIG_PATH = "buildings/";
+        static const char * BUILDINGS_CONFIG_PATH;
         static const uint8_t SUPPORTED_VERSION = 1;
 
     private:

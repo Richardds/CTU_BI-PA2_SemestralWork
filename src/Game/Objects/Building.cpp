@@ -1,12 +1,15 @@
 #include "Building.h"
 #include "../GameLogic.h"
 
+const SDL_Color SW::Building::CONSTRUCTION_COLOR = {200, 200, 200};
+const SDL_Color SW::Building::LEVEL_BADGE_COLOR = {255, 252, 37};
+
 SW::Building::Building(const BuildingConfig * config, Position game_position)
     : Rectangle(
             config->getSizeX() * GameLogic::TILE_SIZE + (config->getSizeX() - 1) * GameLogic::TILE_SPACING,
             config->getSizeY() * GameLogic::TILE_SIZE + (config->getSizeY() - 1) * GameLogic::TILE_SPACING,
             GameLogic::convertFromGameCoordinates(game_position),
-            {0, 0, 0}),
+            Building::CONSTRUCTION_COLOR),
       _config(config),
       _game_position(game_position),
       _resources_limit(),
@@ -121,7 +124,7 @@ void SW::Building::setBuiltInTicks(uint16_t ticks) {
     }
     this->_built = false;
     this->_construction_time_left = ticks;
-    this->_color = {0, 0, 0};
+    this->_color = Building::CONSTRUCTION_COLOR;
 }
 
 void SW::Building::tick() {
@@ -135,5 +138,23 @@ void SW::Building::tick() {
     // Update building color
     if (this->_built) {
         this->_color = this->getConfig()->getColor();
+    }
+}
+
+void SW::Building::draw(const SW::Renderer & renderer) const {
+    // Render default rectangle
+    Rectangle::draw(renderer);
+    // Render building level badges
+    uint16_t x = this->_position.x;
+    uint16_t y = this->_position.y;
+    Rectangle rectangle(10, 10, {0, 0}, Building::LEVEL_BADGE_COLOR);
+    for (uint8_t i = 1; i < this->_level; i++) {
+        rectangle.setPosition({(uint16_t) (x + 5), (uint16_t) (y + 5)});
+        rectangle.draw(renderer);
+        if (i % 2 == 0) {
+            x += 15;
+            y -= 30;
+        }
+        y += 15;
     }
 }
