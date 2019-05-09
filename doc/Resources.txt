@@ -1,6 +1,0 @@
-gold
-silver
-copper
-iron
-wood
-grain
