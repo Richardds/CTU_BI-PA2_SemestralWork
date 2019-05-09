@@ -13,8 +13,10 @@ void SW::BuildingGenerator::generate() {
             {0, 1, 3, 0, 0, 0},
             {1, 1.8, 2.3, 1, 1, 1.3},
 
-            {10, 50, 100, 0, 0, 50},
-            {1, 1, 1.5, 1, 1, 1.25}
+            {10, 50, 100, 0, 0, 30},
+            {1, 1, 1.5, 1, 1, 1.25},
+
+            {0, 5, 0, 5, 5, 3}
     );
 
     Tools::BuildingConfigGenerator::generate(
@@ -28,7 +30,9 @@ void SW::BuildingGenerator::generate() {
             {1, 1, 1.1, 1, 1, 1.5},
 
             {0, 0, 0, 0, 0, 10},
-            {1, 1, 1, 1, 1, 1.5}
+            {1, 1, 1, 1, 1, 1.5},
+
+            {2, 15, 100, 10, 10, 30}
     );
 
     Tools::BuildingConfigGenerator::generate(
@@ -42,7 +46,9 @@ void SW::BuildingGenerator::generate() {
             {1.5, 1.5, 1.5, 1.5, 1, 1.3},
 
             {5, 20, 150, 120, 0, 0},
-            {1.25, 1.25, 1.25, 1.25, 1, 1}
+            {1.25, 1.25, 1.25, 1.25, 1, 1},
+
+            {0, 30, 150, 0, 10, 70}
     );
 
     Tools::BuildingConfigGenerator::generate(
@@ -56,20 +62,24 @@ void SW::BuildingGenerator::generate() {
             {1, 1, 1, 1, 1.5, 1.3},
 
             {0, 0, 0, 0, 100, 0},
-            {1, 1, 1, 1, 1.25, 1}
+            {1, 1, 1, 1, 1.25, 1},
+
+            {3, 25, 150, 5, 0, 40}
     );
 
     Tools::BuildingConfigGenerator::generate(
             BuildingConfig::BUILDINGS_CONFIG_PATH + std::string("farm.bcfg"),
             "Farm",
-            4, 5,
+            3, 3,
             4,
             {248, 185, 36},
 
             {0, 0, 0, 0, 0, 5},
             {1, 1, 1, 1, 1, 1.8},
 
-            {0, 0, 0, 0, 20, 100},
-            {1, 1, 1, 1, 1, 1.25}
+            {0, 0, 0, 0, 20, 50},
+            {1, 1, 1, 1, 1, 1.25},
+
+            {0, 10, 50, 5, 5, 10}
     );
 }

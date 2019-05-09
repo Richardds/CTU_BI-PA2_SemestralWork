@@ -22,6 +22,7 @@ namespace SW {
         const WorldStats::StatsModifier & getResourcesGainModifier() const;
         const WorldStats::Stats & getResourcesLimitIncreaseBase() const;
         const WorldStats::StatsModifier & getResourcesLimitIncreaseModifier() const;
+        const WorldStats::Stats & getBuildCostBase() const;
 
         static const char * BUILDINGS_CONFIG_PATH;
         static const uint8_t SUPPORTED_VERSION = 1;
@@ -37,6 +38,7 @@ namespace SW {
         const WorldStats::StatsModifier _resources_gain_modifier;
         const WorldStats::Stats _resources_limit_increase_base;
         const WorldStats::StatsModifier _resources_limit_increase_modifier;
+        const WorldStats::Stats _build_cost;
     };
 }
 

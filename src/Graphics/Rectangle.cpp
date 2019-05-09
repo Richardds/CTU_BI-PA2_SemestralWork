@@ -37,7 +37,7 @@ void SW::Rectangle::setHeight(int height) {
     this->_height = height;
 }
 
-bool SW::Rectangle::overlapsPoint(Position point) {
+bool SW::Rectangle::overlapsPoint(Position point) const {
     int left = this->getPositionX();
     int right = left + this->getWidth();
     int top = this->getPositionY();
@@ -46,7 +46,7 @@ bool SW::Rectangle::overlapsPoint(Position point) {
     return left <= point.x && point.x <= right && top <= point.y && point.y <= bottom;
 }
 
-bool SW::Rectangle::overlapsOtherRectangle(const SW::Rectangle & rectangle) {
+bool SW::Rectangle::overlapsOtherRectangle(const SW::Rectangle & rectangle) const {
     int left = this->getPositionX();
     int right = left + this->getWidth();
     int top = this->getPositionY();
@@ -61,13 +61,13 @@ bool SW::Rectangle::overlapsOtherRectangle(const SW::Rectangle & rectangle) {
     return fuck;
 }
 
-bool SW::Rectangle::overlapsHorizontalLine(int offset) {
+bool SW::Rectangle::overlapsHorizontalLine(int offset) const {
     int top = this->getPositionY();
     int bottom = top + this->getHeight();
     return top <= offset && offset <= bottom;
 }
 
-bool SW::Rectangle::overlapsVerticalLine(int offset) {
+bool SW::Rectangle::overlapsVerticalLine(int offset) const {
     int left = this->getPositionX();
     int right = left + this->getWidth();
     return left <= offset && offset <= right;

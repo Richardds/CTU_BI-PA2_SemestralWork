@@ -19,7 +19,8 @@ namespace SW {
                                  const WorldStats::Stats & resources_gain_base,
                                  const WorldStats::StatsModifier & resources_gain_modifier,
                                  const SW::WorldStats::Stats & resources_limit_increase_base,
-                                 const WorldStats::StatsModifier & resources_limit_increase_modifier);
+                                 const WorldStats::StatsModifier & resources_limit_increase_modifier,
+                                 const WorldStats::Stats & build_cost_base);
         };
     }
 }

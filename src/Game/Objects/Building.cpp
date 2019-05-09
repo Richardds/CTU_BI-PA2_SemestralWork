@@ -4,7 +4,7 @@
 const SDL_Color SW::Building::CONSTRUCTION_COLOR = {200, 200, 200};
 const SDL_Color SW::Building::LEVEL_BADGE_COLOR = {255, 252, 37};
 
-SW::Building::Building(const BuildingConfig * config, Position game_position)
+SW::Building::Building(const std::shared_ptr<const BuildingConfig> & config, Position game_position)
     : Rectangle(
             config->getSizeX() * GameLogic::TILE_SIZE + (config->getSizeX() - 1) * GameLogic::TILE_SPACING,
             config->getSizeY() * GameLogic::TILE_SIZE + (config->getSizeY() - 1) * GameLogic::TILE_SPACING,
@@ -20,7 +20,7 @@ SW::Building::Building(const BuildingConfig * config, Position game_position)
     this->setLevel(1); // Trigger resources update
 }
 
-const SW::BuildingConfig * SW::Building::getConfig() const {
+const std::shared_ptr<const SW::BuildingConfig> SW::Building::getConfig() const {
     return this->_config;
 }
 

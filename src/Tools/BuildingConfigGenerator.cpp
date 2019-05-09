@@ -11,7 +11,8 @@ bool SW::Tools::BuildingConfigGenerator::generate(const std::string & path,
                                                   const SW::WorldStats::Stats & resources_gain_base,
                                                   const WorldStats::StatsModifier & resources_gain_modifier,
                                                   const SW::WorldStats::Stats & resources_limit_increase_base,
-                                                  const WorldStats::StatsModifier & resources_limit_increase_modifier) {
+                                                  const WorldStats::StatsModifier & resources_limit_increase_modifier,
+                                                  const WorldStats::Stats & build_cost_base) {
     _Internal("Generating building config '" + path + "'.");
     BinaryWriter writer;
     if (!writer.open(path)) {
@@ -30,6 +31,7 @@ bool SW::Tools::BuildingConfigGenerator::generate(const std::string & path,
     writer.write(resources_gain_modifier);
     writer.write(resources_limit_increase_base);
     writer.write(resources_limit_increase_modifier);
+    writer.write(build_cost_base);
     writer.close();
     _Internal("Building config '" + path + "' successfully generated.");
     return true;

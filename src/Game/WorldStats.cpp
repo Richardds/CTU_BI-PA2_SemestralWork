@@ -29,6 +29,16 @@ bool SW::WorldStats::increaseGrain(int16_t amount) {
     return WorldStats::increaseFunction(this->_resources.grain, amount, this->_resources_limit.grain);
 }
 
+void SW::WorldStats::increaseResources(const SW::WorldStats::Stats & resources, bool invert_values) {
+    int16_t modifier = invert_values ? -1 : 1;
+    this->increaseGold(modifier * resources.gold);
+    this->increaseSilver(modifier * resources.silver);
+    this->increaseCopper(modifier * resources.copper);
+    this->increaseIron(modifier * resources.iron);
+    this->increaseWood(modifier * resources.wood);
+    this->increaseGrain(modifier * resources.grain);
+}
+
 void SW::WorldStats::updateResourcesFromBuildings(const IdentifyingCollection<std::shared_ptr<Building>> & buildings) {
     this->_population = 0;
     this->_resources_limit = {0};
@@ -44,21 +54,15 @@ void SW::WorldStats::updateResourcesFromBuildings(const IdentifyingCollection<st
 }
 
 bool SW::WorldStats::tick() {
-    this->increaseGold(this->_resources_gain.gold);
-    this->increaseSilver(this->_resources_gain.silver);
-    this->increaseCopper(this->_resources_gain.copper);
-    this->increaseIron(this->_resources_gain.iron);
-    this->increaseWood(this->_resources_gain.wood);
-    this->increaseGrain(this->_resources_gain.grain);
+    this->increaseResources(this->_resources_gain);
     return this->_resources.grain > 0 || this->_resources_gain.grain > 0;
 }
 
 void SW::WorldStats::reset() {
     this->_population = 0;
-    this->_resources = {0};
+    this->_resources = {5, 5, 0, 25, 30, 15};
     this->_resources_gain = {0};
     this->_resources_limit = {0};
-    this->_resources.grain = 5;
 }
 
 void SW::WorldStats::loadResources(const SW::WorldStats::Stats & resources) {
@@ -81,6 +85,9 @@ std::string SW::WorldStats::toString(bool population_only) {
 template<typename T>
 bool SW::WorldStats::increaseFunction(T & var, T amount, T limit) {
     if (amount > 0) {
+        if (amount > limit) {
+            return true;
+        }
         if (var + amount > limit) {
             var += limit - var;
             return true;
@@ -97,4 +104,13 @@ bool SW::WorldStats::increaseFunction(T & var, T amount, T limit) {
 
 void SW::WorldStats::writeToBinaryWriter(SW::BinaryWriter & writer) const {
     writer.write(this->_resources);
+}
+
+bool SW::WorldStats::validateSufficientResources(const SW::WorldStats::Stats & resources) {
+    return resources.gold <= this->_resources.gold
+        && resources.silver <= this->_resources.silver
+        && resources.copper <= this->_resources.copper
+        && resources.iron <= this->_resources.iron
+        && resources.wood <= this->_resources.wood
+        && resources.grain <= this->_resources.grain;
 }

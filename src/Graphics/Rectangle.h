@@ -17,10 +17,10 @@ namespace SW {
         void setWidth(int width);
         int getHeight() const;
         void setHeight(int height);
-        bool overlapsPoint(Position point);
-        bool overlapsOtherRectangle(const Rectangle & rectangle);
-        bool overlapsHorizontalLine(int offset);
-        bool overlapsVerticalLine(int offset);
+        bool overlapsPoint(Position point) const;
+        bool overlapsOtherRectangle(const Rectangle & rectangle) const;
+        bool overlapsHorizontalLine(int offset) const;
+        bool overlapsVerticalLine(int offset) const;
         void draw(const Renderer & renderer) const override;
 
     protected:

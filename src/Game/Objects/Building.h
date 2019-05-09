@@ -8,8 +8,8 @@
 namespace SW {
     class Building : public Rectangle, public Exportable {
     public:
-        Building(const BuildingConfig * config, Position game_position);
-        const BuildingConfig * getConfig() const;
+        Building(const std::shared_ptr<const BuildingConfig> & config, Position game_position);
+        const std::shared_ptr<const BuildingConfig> getConfig() const;
         void updateResourcesLimit();
         void updateResourcesGain();
         void applyBuildingResourcesLimit(WorldStats::Stats & resources);
@@ -35,7 +35,7 @@ namespace SW {
         static const SDL_Color LEVEL_BADGE_COLOR;
 
     private:
-        const BuildingConfig * _config;
+        const std::shared_ptr<const BuildingConfig> _config;
         Position _game_position;
         WorldStats::Stats _resources_limit;
         WorldStats::Stats _resources_gain;

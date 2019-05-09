@@ -25,9 +25,6 @@ SW::GameLogic::GameLogic(const Window & window)
 
 SW::GameLogic::~GameLogic() {
     this->clearGameState();
-    for (auto const & config : this->_building_configs) {
-        delete config.second;
-    }
     this->_building_configs.clear();
 }
 
@@ -40,8 +37,9 @@ void SW::GameLogic::clearGameState() {
 
 void SW::GameLogic::loadBuildingConfigs(std::initializer_list<BuildingConfigKeyboardBinding> bindings) {
     for (auto const & binding : bindings) {
-        auto * config = new BuildingConfig(binding.config_name);
-        this->_building_configs.insert(std::pair<std::string, BuildingConfig *>(binding.config_name, config));
+        BuildingConfig config(binding.config_name);
+        this->_building_configs.insert(std::pair<std::string,
+                std::shared_ptr<BuildingConfig>>(binding.config_name, std::make_shared<BuildingConfig>(config)));
         this->_building_configs_bindings.insert(std::pair<uint16_t , std::string>(binding.key_code, binding.config_name));
     }
 }
@@ -75,19 +73,11 @@ void SW::GameLogic::process(const Renderer & renderer) {
     }
 }
 
-bool SW::GameLogic::build(const std::string & config_name, SW::Position position, uint32_t * building_id) {
-    BuildingConfig * config = this->_building_configs[config_name];
-    if (config == nullptr) {
-        _Error("Cannot build building with nonexistent config '" + config_name + "'.");
-        return false;
-    }
-
-    Building to_build(config, position);
-
+bool SW::GameLogic::build(const Building & to_build, uint32_t * building_id) {
     // Check if new building collides with others
     for (const auto & building : this->_buildings) {
         if (building.second->overlapsOtherRectangle(to_build)) {
-            _Info("Cannot build building '" + to_build.getConfig()->getTitle() + "' colliding with building '"
+            _Info("Cannot build '" + to_build.getConfig()->getTitle() + "' colliding with building '"
             + building.second->getConfig()->getTitle() + "' ID(" + std::to_string(building.first) + ").");
             return false;
         }
@@ -95,7 +85,7 @@ bool SW::GameLogic::build(const std::string & config_name, SW::Position position
 
     // Check if building collides with windows borders
     if (to_build.overlapsHorizontalLine(this->_window.getHeight()) || to_build.overlapsVerticalLine(this->_window.getWidth())) {
-        _Info("Cannot build building '" + to_build.getConfig()->getTitle() + "' colliding window borders.");
+        _Info("Cannot build '" + to_build.getConfig()->getTitle() + "' colliding window borders.");
         return false;
     }
 
@@ -107,8 +97,40 @@ bool SW::GameLogic::build(const std::string & config_name, SW::Position position
     }
 
     _Info("Building '" + to_build.getConfig()->getTitle() + "' built on coordinates ["
-    + std::to_string(position.x) + "," + std::to_string(position.y) + "].");
+    + std::to_string(to_build.getGamePositionX()) + "," + std::to_string(to_build.getGamePositionY()) + "].");
     return true;
+}
+
+bool SW::GameLogic::clickBuild(const std::string & config_name, SW::Position position, uint32_t * building_id) {
+    Building to_build(this->queryConfig(config_name), GameLogic::convertToGameCoordinates(position));
+
+    // Check construction costs
+    WorldStats::Stats costs = to_build.getConfig()->getBuildCostBase();
+    if (!this->_stats.validateSufficientResources(costs)) {
+        _Info("Cannot build '" + to_build.getConfig()->getTitle() + "' due to insufficient resources.");
+        _Info("'" + to_build.getConfig()->getTitle() + "' costs: " + costs.toString());
+        return false;
+    }
+
+    // Subtract construction costs
+    if (this->build(to_build, building_id)) {
+        this->_stats.increaseResources(costs, true);
+        return true;
+    }
+
+    return false;
+}
+
+bool SW::GameLogic::forceBuild(const std::string & config_name, SW::Position position, uint32_t * building_id) {
+    // Build new building
+    std::shared_ptr<BuildingConfig> config = this->_building_configs[config_name];
+    if (config == nullptr) {
+        _Error("Cannot build with nonexistent config '" + this->_selected_config + "'.");
+        return false;
+    }
+    Building to_build(config, position);
+
+    return this->build(to_build, building_id);
 }
 
 bool SW::GameLogic::upgrade(SW::Position position) {
@@ -117,18 +139,23 @@ bool SW::GameLogic::upgrade(SW::Position position) {
         return false;
     }
     std::shared_ptr<Building> building = this->_buildings.get(building_id);
-    // TODO: Check required resources for building upgrade
     if (!building->isBuilt()) {
         _Info("Cannot upgrade building '" + building->getConfig()->getTitle() + "'. Building is under construction.");
         return false;
     }
-    if (!building->levelUp()) {
-        _Info("Cannot upgrade building '" + building->getConfig()->getTitle() + "'. Building is upgraded to maximum level.");
+    WorldStats::Stats costs = building->getConfig()->getBuildCostBase() * (building->getLevel() + 1);
+    if (!this->_stats.validateSufficientResources(costs)) {
+        _Info("Cannot upgrade building '" + building->getConfig()->getTitle() + "' due to insufficient resources.");
         return false;
     }
-    _Info("Building '" + building->getConfig()->getTitle() + "' upgraded to level "
-    + std::to_string(building->getLevel()) + ".");
-    return true;
+    if (building->levelUp()) {
+        this->_stats.increaseResources(costs, true);
+        _Info("Building '" + building->getConfig()->getTitle() + "' upgraded to level "
+              + std::to_string(building->getLevel()) + ".");
+        return true;
+    }
+    _Info("Cannot upgrade building '" + building->getConfig()->getTitle() + "'. Building is upgraded to maximum level.");
+    return false;
 }
 
 bool SW::GameLogic::destroy(SW::Position position) {
@@ -136,6 +163,16 @@ bool SW::GameLogic::destroy(SW::Position position) {
     if (building_id == 0) {
         return false;
     }
+    std::shared_ptr<Building> building = this->_buildings.get(building_id);
+    // Process refund
+    WorldStats::Stats refund = building->getConfig()->getBuildCostBase() * GameLogic::REFUND_MODIFIER;
+    refund.grain = building->getConfig()->getBuildCostBase().grain * -3;
+    // Validate sufficient resources
+    if (!this->_stats.validateSufficientResources(refund * -1)) {
+        _Info("Cannot destroy building '" + building->getConfig()->getTitle() + "' due to insufficient resources.");
+        return false;
+    }
+    this->_stats.increaseResources(refund);
     this->_buildings.remove(building_id);
     return true;
 }
@@ -207,7 +244,7 @@ bool SW::GameLogic::load(const std::string & path) {
         reader.read(building_position);
         reader.read(building_level);
         reader.read(building_construction_time_left);
-        if (!this->build(building_config, building_position, &building_id)) {
+        if (!this->forceBuild(building_config, building_position, &building_id)) {
             _Error("Unable to place building '" + building_config + "' from saved game state.");
             return false;
         }
@@ -223,6 +260,12 @@ bool SW::GameLogic::load(const std::string & path) {
     _Info("Game state loaded from file '" + path + "' successfully.");
 
     return true;
+}
+
+std::shared_ptr<SW::BuildingConfig> SW::GameLogic::queryConfig(const std::string & name) const {
+    auto iterator = this->_building_configs.find(this->_selected_config);
+    assert(iterator != std::end(this->_building_configs));
+    return iterator->second;
 }
 
 uint16_t SW::GameLogic::convertToGameCoordinate(uint16_t coordinate) {
@@ -314,10 +357,7 @@ void SW::GameLogic::handleMouseClick(const SDL_MouseButtonEvent & click) {
     }
     switch (click.button) {
         case SDL_BUTTON_LEFT:
-            // Build new building
-            this->build(this->_selected_config, GameLogic::convertToGameCoordinates({
-                (uint16_t)click.x, (uint16_t)click.y
-            }));
+            this->clickBuild(this->_selected_config, {(uint16_t)click.x, (uint16_t)click.y});
             break;
         case SDL_BUTTON_MIDDLE:
             // Upgrade existing building

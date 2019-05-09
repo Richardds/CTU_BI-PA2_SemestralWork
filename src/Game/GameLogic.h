@@ -23,11 +23,14 @@ namespace SW {
         void clearGameState();
         void process(const Renderer & renderer);
         void handleEvent(const SDL_Event & event);
-        bool build(const std::string & config_name, Position position, uint32_t * building_id = nullptr);
+        bool build(const Building & to_build, uint32_t * building_id = nullptr);
+        bool clickBuild(const std::string & config_name, Position position, uint32_t * building_id = nullptr);
+        bool forceBuild(const std::string & config_name, Position position, uint32_t * building_id = nullptr);
         bool upgrade(Position position);
         bool destroy(Position position);
         bool save(const std::string & path);
         bool load(const std::string & path);
+        std::shared_ptr<BuildingConfig> queryConfig(const std::string & name) const;
 
         static uint16_t convertToGameCoordinate(uint16_t coordinate);
         static uint16_t convertFromGameCoordinate(uint16_t coordinate);
@@ -37,6 +40,7 @@ namespace SW {
         static const uint32_t TICK_DEFAULT = 2000;
         static const uint16_t TILE_SIZE = 40;
         static const uint16_t TILE_SPACING = 5;
+        static constexpr double REFUND_MODIFIER = 0.350;
         static const uint8_t SUPPORTED_GAME_STATE_VERSION = 1;
 
     private:
@@ -48,7 +52,7 @@ namespace SW {
         SDL_Point _cursor_position;
         WorldStats _stats;
         IdentifyingCollection<std::shared_ptr<Building>> _buildings;
-        std::map<std::string, BuildingConfig *> _building_configs;
+        std::map<std::string, std::shared_ptr<BuildingConfig>> _building_configs;
         std::map<int16_t , std::string> _building_configs_bindings;
         std::string _selected_config;
 
