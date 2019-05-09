@@ -1,7 +1,7 @@
 #include "WorldStats.h"
 #include "Objects/Building.h"
 
-SW::WorldStats::WorldStats() : _population(0), _resources(), _resources_limit(), _resources_gain() {
+SW::WorldStats::WorldStats() : _population(0), _resources(), _resources_gain(), _resources_limit() {
     this->reset();
 }
 

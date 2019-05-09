@@ -15,8 +15,8 @@ SW::Building::Building(const BuildingConfig * config, Position game_position)
       _resources_limit(),
       _resources_gain(),
       _level(0),
-      _built(false),
-      _construction_time_left(config->getBuildTime()) {
+      _construction_time_left(config->getBuildTime()),
+      _built(false) {
     this->setLevel(1); // Trigger resources update
 }
 
@@ -28,12 +28,12 @@ void SW::Building::updateResourcesLimit() {
     const WorldStats::Stats & resources_limit_increase_base = this->_config->getResourcesLimitIncreaseBase();
     const WorldStats::StatsModifier & resources_limit_increase_modifier = this->_config->getResourcesLimitIncreaseModifier();
     this->_resources_limit = {
-            .gold = (int16_t)((float)resources_limit_increase_base.gold * (float)this->_level * resources_limit_increase_modifier.gold),
-            .silver = (int16_t)((float)resources_limit_increase_base.silver * (float)this->_level * resources_limit_increase_modifier.silver),
-            .copper = (int16_t)((float)resources_limit_increase_base.copper * (float)this->_level * resources_limit_increase_modifier.copper),
-            .iron = (int16_t)((float)resources_limit_increase_base.iron * (float)this->_level * resources_limit_increase_modifier.iron),
-            .wood = (int16_t)((float)resources_limit_increase_base.wood * (float)this->_level * resources_limit_increase_modifier.wood),
-            .grain = (int16_t)((float)resources_limit_increase_base.grain * (float)this->_level * resources_limit_increase_modifier.grain)
+            (int16_t)((float)resources_limit_increase_base.gold * (float)this->_level * resources_limit_increase_modifier.gold),
+            (int16_t)((float)resources_limit_increase_base.silver * (float)this->_level * resources_limit_increase_modifier.silver),
+            (int16_t)((float)resources_limit_increase_base.copper * (float)this->_level * resources_limit_increase_modifier.copper),
+            (int16_t)((float)resources_limit_increase_base.iron * (float)this->_level * resources_limit_increase_modifier.iron),
+            (int16_t)((float)resources_limit_increase_base.wood * (float)this->_level * resources_limit_increase_modifier.wood),
+            (int16_t)((float)resources_limit_increase_base.grain * (float)this->_level * resources_limit_increase_modifier.grain)
     };
 }
 
@@ -41,12 +41,12 @@ void SW::Building::updateResourcesGain() {
     const WorldStats::Stats & resources_gain_base = this->_config->getResourcesGainBase();
     const WorldStats::StatsModifier & resources_gain_modifier = this->_config->getResourcesGainModifier();
     this->_resources_gain = {
-            .gold = (int16_t)((float)resources_gain_base.gold * (float)this->_level * resources_gain_modifier.gold),
-            .silver = (int16_t)((float)resources_gain_base.silver * (float)this->_level * resources_gain_modifier.silver),
-            .copper = (int16_t)((float)resources_gain_base.copper * (float)this->_level * resources_gain_modifier.copper),
-            .iron = (int16_t)((float)resources_gain_base.iron * (float)this->_level * resources_gain_modifier.iron),
-            .wood = (int16_t)((float)resources_gain_base.wood * (float)this->_level * resources_gain_modifier.wood),
-            .grain = (int16_t)((float)resources_gain_base.grain * (float)this->_level * resources_gain_modifier.grain)
+            (int16_t)((float)resources_gain_base.gold * (float)this->_level * resources_gain_modifier.gold),
+            (int16_t)((float)resources_gain_base.silver * (float)this->_level * resources_gain_modifier.silver),
+            (int16_t)((float)resources_gain_base.copper * (float)this->_level * resources_gain_modifier.copper),
+            (int16_t)((float)resources_gain_base.iron * (float)this->_level * resources_gain_modifier.iron),
+            (int16_t)((float)resources_gain_base.wood * (float)this->_level * resources_gain_modifier.wood),
+            (int16_t)((float)resources_gain_base.grain * (float)this->_level * resources_gain_modifier.grain)
     };
 }
 

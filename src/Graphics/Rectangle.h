@@ -24,9 +24,9 @@ namespace SW {
         void draw(const Renderer & renderer) const override;
 
     protected:
-        SDL_Color _color;
         int _width;
         int _height;
+        SDL_Color _color;
     };
 }
 
