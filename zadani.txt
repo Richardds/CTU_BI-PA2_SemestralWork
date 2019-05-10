@@ -37,3 +37,4 @@ hry sa aktuálny stav dediny prepíše.
 Cieľom hry je nedostiahnuť stavu hladomoru.
 
 Semstrálnu prácu priebežne náhrávajte do versioning systému GIT.
+https://gitlab.fit.cvut.cz/boldiric/bi-pa2-semestral-work
