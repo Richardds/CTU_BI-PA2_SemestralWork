@@ -156,6 +156,8 @@ namespace SW {
         std::map<std::string, std::shared_ptr<BuildingConfig>> _building_configs;
         std::map<int16_t , std::string> _building_configs_bindings;
         std::string _selected_config;
+        bool _dev_mode;
+        bool _city_hall_built;
 
         /**
          * @return true on next game tick, otherwise false
@@ -171,7 +173,7 @@ namespace SW {
          * Handles keyboard key press.
          * @param code Keyboard key identifier
          */
-        void handleKeyboard(SDL_Keycode code);
+        void handleKeyDown(SDL_Keycode code);
         /**
          * Handles mouse click.
          * @param click Mouse click event

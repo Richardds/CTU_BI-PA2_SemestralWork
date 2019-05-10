@@ -9,7 +9,9 @@ SW::GameLogic::GameLogic(const Window & window)
       _tick_last(0),
       _game_time(0),
       _cursor_position({0, 0}),
-      _stats() {
+      _stats(),
+      _dev_mode(false),
+      _city_hall_built(false) {
     // Load building types
     this->loadBuildingConfigs({
         {SDLK_1, "city_hall"},
@@ -29,6 +31,7 @@ SW::GameLogic::~GameLogic() {
 }
 
 void SW::GameLogic::clearGameState() {
+    this->_city_hall_built = false;
     this->_tick_last = 0;
     this->_game_time = 0;
     this->_buildings.clear();
@@ -46,7 +49,7 @@ void SW::GameLogic::loadBuildingConfigs(std::initializer_list<BuildingConfigKeyb
 
 void SW::GameLogic::process(const Renderer & renderer) {
     if (this->_running && this->tick()) {
-        this->_game_time += GameLogic::TICK_DEFAULT / 1000;
+        this->_game_time += GameLogic::TICK_DEFAULT / 10;
         // Update buildings status
         for (auto const & building : this->_buildings) {
             building.second->tick();
@@ -89,6 +92,15 @@ bool SW::GameLogic::build(const Building & to_build, uint32_t * building_id) {
         return false;
     }
 
+    if (to_build.getConfig()->getName() == "city_hall") {
+        if (this->_city_hall_built) {
+            _Info("Cannot build '" + to_build.getConfig()->getTitle() + "'. There can be only one per village.");
+            return false;
+        } else {
+            this->_city_hall_built = true;
+        }
+    }
+
     // Add building to render queue
     uint32_t id = this->_buildings.add(std::make_shared<Building>(to_build));
 
@@ -103,6 +115,13 @@ bool SW::GameLogic::build(const Building & to_build, uint32_t * building_id) {
 
 bool SW::GameLogic::clickBuild(const std::string & config_name, SW::Position position, uint32_t * building_id) {
     Building to_build(this->queryConfig(config_name), GameLogic::convertToGameCoordinates(position));
+
+    // Skip resources check if DEV mode is active
+    if (this->_dev_mode) {
+        _Internal("!!! DEV MODE !!!");
+        this->build(to_build, building_id);
+        return true;
+    }
 
     // Check construction costs
     WorldStats::Stats costs = to_build.getConfig()->getBuildCostBase();
@@ -138,7 +157,16 @@ bool SW::GameLogic::upgrade(SW::Position position) {
     if (building_id == 0) {
         return false;
     }
+
     std::shared_ptr<Building> building = this->_buildings.get(building_id);
+
+    // Skip resources and construction check if DEV mode is active
+    if (this->_dev_mode) {
+        _Internal("!!! DEV MODE !!!");
+        building->levelUp();
+        return true;
+    }
+
     if (!building->isBuilt()) {
         _Info("Cannot upgrade building '" + building->getConfig()->getTitle() + "'. Building is under construction.");
         return false;
@@ -166,6 +194,16 @@ bool SW::GameLogic::destroy(SW::Position position) {
     std::shared_ptr<Building> building = this->_buildings.get(building_id);
     // Process refund
     WorldStats::Stats refund = building->getConfig()->getBuildCostBase() * GameLogic::REFUND_MODIFIER;
+
+    // Skip resources check if DEV mode is active
+    if (this->_dev_mode) {
+        _Internal("!!! DEV MODE !!!");
+        refund.grain = 0;
+        this->_stats.increaseResources(refund);
+        this->_buildings.remove(building_id);
+        return true;
+    }
+
     refund.grain = building->getConfig()->getBuildCostBase().grain * -3;
     // Validate sufficient resources
     if (!this->_stats.validateSufficientResources(refund * -1)) {
@@ -312,7 +350,7 @@ void SW::GameLogic::handleEvent(const SDL_Event & event) {
     switch (event.type) {
             // Keyboard handler
         case SDL_KEYDOWN:
-            this->handleKeyboard(event.key.keysym.sym);
+            this->handleKeyDown(event.key.keysym.sym);
             break;
         case SDL_MOUSEBUTTONUP:
             // Mouse click handler
@@ -323,9 +361,13 @@ void SW::GameLogic::handleEvent(const SDL_Event & event) {
     }
 }
 
-void SW::GameLogic::handleKeyboard(SDL_Keycode code) {
+void SW::GameLogic::handleKeyDown(SDL_Keycode code) {
     // Handle action keys
     switch (code) {
+        case SDLK_g:
+            // Toggle dev mode
+            this->_dev_mode = !this->_dev_mode;
+            break;
         case SDLK_n:
             // Start new game
             this->clearGameState();
