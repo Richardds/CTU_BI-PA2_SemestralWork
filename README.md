@@ -1,9 +1,7 @@
 # BI-PA2: Semestral work
 
-Prehlásenie: `prohlaseni.txt`
+Vypracoval: Richard Boldiš (boldiric)
 
-Zadanie: `zadani.txt`
+Prehlásenie: [prohlaseni.txt](https://gitlab.fit.cvut.cz/boldiric/bi-pa2-semestral-work/blob/master/prohlaseni.txt)
 
-Diagram tried: `doc/classes.png`
-
-![Diagram tried](doc/classes.png)
+Zadanie: [zadani.txt](https://gitlab.fit.cvut.cz/boldiric/bi-pa2-semestral-work/blob/master/zadani.txt)

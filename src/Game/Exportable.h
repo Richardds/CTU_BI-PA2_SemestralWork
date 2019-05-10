@@ -8,6 +8,10 @@ namespace SW {
     class BinaryWriter;
     class Exportable {
     public:
+        /**
+         * Writes current object attributes ot binary stream.
+         * @param writer
+         */
         virtual void writeToBinaryWriter(BinaryWriter & writer) const = 0;
     };
 }

@@ -11,9 +11,9 @@ SW::Trace::Trace(const std::string & file,
     this->_function = function;
 }
 
-std::string SW::Trace::toString(bool hide_system_info) const {
+std::string SW::Trace::toString(bool hide_fs) const {
     std::string output;
-    if (!hide_system_info) {
+    if (!hide_fs) {
         output += this->_file + ":" + std::to_string(this->_line) + " ";
     }
     return output + this->_function;

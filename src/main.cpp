@@ -4,15 +4,23 @@
 #include "Tools/BuildingConfigGenerator.h"
 #include "BuildingGenerator.h"
 
+/**
+ * Default project namespace
+ */
 using namespace SW;
 
+/**
+ * Application entry point.
+ * @return program status
+ */
 int main() {
     // Generate default building types for project demonstration
     SW::BuildingGenerator::generate();
 
+    // Construct application backbone
     SemestralWork application;
 
-    // Initialize application
+    // Initialize application subsystems
     if (!application.initialize()) {
         _Error("Failed to initialize application!");
         return 1;

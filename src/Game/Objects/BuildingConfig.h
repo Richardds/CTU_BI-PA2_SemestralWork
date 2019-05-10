@@ -8,23 +8,74 @@
 #include "../WorldStats.h"
 
 namespace SW {
+    /**
+     * Holds building attributes and methods shared among all buildings of same type.
+     */
     class BuildingConfig {
     public:
+        /**
+         * Constructor
+         * @param config_name Configuration file name located in SW::BuildingConfig::BUILDINGS_CONFIG_PATH
+         */
         explicit BuildingConfig(const std::string & config_name);
+        /**
+         * Loads configuration from file.
+         * @param config_name Configuration file name located in SW::BuildingConfig::BUILDINGS_CONFIG_PATH
+         * @return true on success, otherwise false
+         */
         bool load(const std::string & config_name);
+        /**
+         * @return Configuration game title
+         */
         std::string getTitle() const;
+        /**
+         * @return Configuration width in pixels
+         */
         uint8_t getSizeX() const;
+        /**
+         * @return Configuration height in pixels
+         */
         uint8_t getSizeY() const;
+        /**
+         * @return Configuration construction time in ticks
+         */
         uint16_t getBuildTime() const;
+        /**
+         * @return Configuration color
+         */
         SDL_Color getColor() const;
+        /**
+         * @return Configuration file name located in SW::BuildingConfig::BUILDINGS_CONFIG_PATH
+         */
         std::string getName() const;
+        /**
+         * @return Configuration base of resources gain
+         */
         const WorldStats::Stats & getResourcesGainBase() const;
+        /**
+         * @return Configuration dynamic modifier of resources gain
+         */
         const WorldStats::StatsModifier & getResourcesGainModifier() const;
+        /**
+         * @return Configuration base of resources limit
+         */
         const WorldStats::Stats & getResourcesLimitIncreaseBase() const;
+        /**
+         * @return Configuration dynamic modifier of resources limit
+         */
         const WorldStats::StatsModifier & getResourcesLimitIncreaseModifier() const;
+        /**
+         * @return Configuration base of construction costs
+         */
         const WorldStats::Stats & getBuildCostBase() const;
 
+        /**
+         * Path to folder of all configuration files
+         */
         static const char * BUILDINGS_CONFIG_PATH;
+        /**
+         * Current configuration binary format version. Should be increased on every format update.
+         */
         static const uint8_t SUPPORTED_VERSION = 1;
 
     private:

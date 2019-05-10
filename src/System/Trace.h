@@ -4,11 +4,28 @@
 #include <string>
 
 namespace SW {
+    /**
+     * Holds method calling trace.
+     */
     class Trace {
     public:
+        /**
+         * Constructor
+         */
         Trace();
+        /**
+         * Constructor
+         * @param file Method source file
+         * @param line Method source line number
+         * @param function Method name
+         */
         Trace(const std::string & file, unsigned int line, const std::string & function);
-        std::string toString(bool hide_system_info = true) const;
+        /**
+         * Converts trace to std::string
+         * @param hide_fs Hides file system info if true
+         * @return converted std::string
+         */
+        std::string toString(bool hide_fs = true) const;
     private:
         bool available;
         std::string _file;

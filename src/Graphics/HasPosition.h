@@ -7,19 +7,47 @@
 namespace SW {
     class Renderer;
 
+    /**
+     * Holds object screen coordinates.
+     */
     class HasPosition {
     public:
+        /**
+         * Constructor
+         */
         HasPosition();
+        /**
+         * Constructor
+         * @param position Screen coordinates
+         */
         explicit HasPosition(Position position);
+        /**
+         * @return Object screen coordinates
+         */
         Position getPosition() const;
-
-        virtual void setPosition(Position position);
+        /**
+         * Sets object position.
+         * @param position Screen coordinates
+         */
+        void setPosition(Position position);
+        /**
+         * @return Object screen coordinate x
+         */
         int getPositionX() const;
-
-        virtual void setPositionX(int position_x);
+        /**
+         * Sets object x screen coordinate.
+         * @param position_x Screen x coordinate
+         */
+        void setPositionX(int position_x);
+        /**
+         * @return Object screen coordinate y
+         */
         int getPositionY() const;
-
-        virtual void setPositionY(int position_y);
+        /**
+         * Sets object y screen coordinate.
+         * @param position_y Screen y coordinate
+         */
+        void setPositionY(int position_y);
 
     protected:
         Position _position;
