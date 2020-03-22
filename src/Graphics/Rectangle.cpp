@@ -57,8 +57,7 @@ bool SW::Rectangle::overlapsOtherRectangle(const SW::Rectangle & rectangle) cons
     int rhs_top = rectangle.getPositionY();
     int rhs_bottom = rhs_top + rectangle.getHeight();
 
-    bool fuck = rhs_right >= left && rhs_left <= right && rhs_top <= bottom && rhs_bottom >= top;
-    return fuck;
+    return rhs_right >= left && rhs_left <= right && rhs_top <= bottom && rhs_bottom >= top;
 }
 
 bool SW::Rectangle::overlapsHorizontalLine(int offset) const {
